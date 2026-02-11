@@ -1,1 +1,838 @@
-Hi
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAP Stammdaten Guide</title>
+    <style>
+        /* --- CSS: SAP Fiori Style Framework --- */
+        :root {
+            --sap-shell-bg: #354a5f;
+            --sap-bg: #eff4f9;
+            --sap-card-bg: #ffffff;
+            --sap-text: #32363a;
+            --sap-primary: #0070b1; /* SAP Blue */
+            --sap-hover: #f5f7f9;
+            --sap-border: #d9d9d9;
+            --sap-header-height: 48px;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            margin: 0;
+            font-family: "72", "Arial", sans-serif; /* "72" ist der SAP Font, Fallback Arial */
+            background-color: var(--sap-bg);
+            color: var(--sap-text);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- Header / Shell Bar --- */
+        header {
+            background-color: var(--sap-shell-bg);
+            height: var(--sap-header-height);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-container {
+            flex-grow: 1;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 35px 8px 15px;
+            border-radius: 4px;
+            border: none;
+            outline: none;
+            font-size: 0.9rem;
+            background-color: rgba(255,255,255,0.9);
+            transition: background 0.3s;
+        }
+
+        .search-input:focus {
+            background-color: #fff;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--sap-shell-bg);
+            pointer-events: none;
+        }
+
+        /* --- Layout Container --- */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* --- Sidebar Navigation --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: #fff;
+            border-right: 1px solid var(--sap-border);
+            overflow-y: auto;
+            padding-top: 10px;
+            flex-shrink: 0;
+        }
+
+        .nav-item {
+            cursor: pointer;
+        }
+
+        .nav-header {
+            cursor: pointer; /* Das macht die Hand */
+            padding: 12px 20px;
+            font-weight: bold;
+            color: var(--sap-text);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid transparent;
+        }
+
+        .nav-header:hover {
+            background-color: var(--sap-hover);
+            color: var(--sap-primary);
+        }
+
+        .nav-header .arrow {
+            font-size: 0.8rem;
+            transition: transform 0.3s;
+        }
+
+        .nav-header.active .arrow {
+            transform: rotate(180deg);
+        }
+
+        .sub-menu {
+            display: none;
+            background-color: #fcfcfc;
+            padding-left: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .sub-menu li {
+            padding: 10px 20px 10px 40px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+
+        .sub-menu li:hover {
+            background-color: #eef5fa;
+        }
+
+        .sub-menu li.active-link {
+            border-left: 3px solid var(--sap-primary);
+            background-color: #eef5fa;
+            font-weight: bold;
+            color: var(--sap-primary);
+        }
+
+        /* --- Main Content Area --- */
+        .content-area {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .content-card {
+            background: var(--sap-card-bg);
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+            border-top: 4px solid var(--sap-primary);
+        }
+
+        h1 { font-size: 1.8rem; margin-top: 0; color: var(--sap-text); }
+        h2 { font-size: 1.4rem; margin-top: 30px; color: var(--sap-shell-bg); border-bottom: 1px solid var(--sap-border); padding-bottom: 10px; }
+        h3 { font-size: 1.1rem; color: var(--sap-text); margin-top: 20px; }
+        p, li { line-height: 1.6; color: #555; }
+        
+        .transaction-code {
+            background-color: #eef5fa;
+            color: var(--sap-primary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        /* --- Image Placeholder --- */
+        .img-placeholder {
+            background-color: #e0e0e0;
+            border: 2px dashed #999;
+            color: #555;
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-style: italic;
+        }
+
+        /* --- Interactive Lexicon (Tooltip/Modal) --- */
+        .term-highlight {
+            cursor: pointer; /* Oder 'help', wenn du ein Fragezeichen an der Maus willst */
+            border-bottom: 1px dotted var(--sap-primary);
+            color: var(--sap-primary);
+            cursor: help;
+            position: relative;
+            padding-right: 15px;
+        }
+
+        .term-highlight::after {
+            content: "?";
+            font-size: 0.7rem;
+            background-color: var(--sap-primary);
+            color: white;
+            border-radius: 50%;
+            width: 12px;
+            height: 12px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 2px;
+            right: 0;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-box {
+            background: white;
+            padding: 25px;
+            border-radius: 4px;
+            width: 400px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border-top: 5px solid var(--sap-primary);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-title {
+            margin-top: 0;
+            color: var(--sap-primary);
+        }
+
+        .modal-link {
+            display: block;
+            margin-top: 15px;
+            color: var(--sap-primary);
+            text-decoration: none;
+            font-weight: bold;
+            text-align: right;
+        }
+        
+        .modal-link:hover {
+            text-decoration: underline;
+        }
+
+        /* --- Search Results --- */
+        .search-results {
+            position: absolute;
+            top: 50px;
+            left: 20px; /* Aligned with search box parent padding */
+            background: white;
+            width: calc(100% - 40px);
+            max-width: 600px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            display: none;
+            z-index: 1100;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .result-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+
+        .result-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .result-item strong {
+            display: block;
+            color: var(--sap-primary);
+        }
+        
+        .result-item small {
+            color: #888;
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5 9.5 9.75 12 11zm0 2.5l-5-2.5-5 2.5 10 5 10-5-5-2.5-5 2.5z"/></svg>
+        SAP Stammdaten Guide
+    </div>
+    <div class="search-container">
+        <input type="text" class="search-input" placeholder="Suchen (z.B. 'Kreditor', 'Anlegen')..." id="searchInput">
+        <span class="search-icon">&#128269;</span> <div class="search-results" id="searchResults"></div>
+    </div>
+</header>
+
+<div class="main-container">
+    
+    <nav class="sidebar" id="sidebar">
+        </nav>
+
+    <main class="content-area" id="mainContent">
+        <div class="content-card">
+            <h1>Willkommen im SAP Stammdaten Guide</h1>
+            <p>Bitte wählen Sie im Menü links eine Transaktion aus oder nutzen Sie die Suche oben, um eine Anleitung zu finden.</p>
+            <p>Dieser Guide basiert auf den internen SAP4school Schulungsunterlagen (Modul A1 & A2) und erklärt sowohl die technischen Klicks als auch die betriebswirtschaftlichen Hintergründe.</p>
+            <div class="img-placeholder">
+                <p>Bild: Übersicht SAP Fiori Launchpad oder Firmenlogo</p>
+            </div>
+        </div>
+    </main>
+</div>
+
+<div class="modal-overlay" id="definitionModal">
+    <div class="modal-box">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <h3 class="modal-title" id="modalTitle">Begriff</h3>
+        <p id="modalText">Definition...</p>
+        <a href="#" id="modalLink" class="modal-link" target="_blank">Mehr...</a>
+    </div>
+</div>
+
+<script>
+    // --- 1. DATENBASIS (Inhalte & Lexikon) ---
+
+    // Lexikon-Daten (Definitionen aus PDF A1/A2 + Expertenwissen)
+    const lexiconData = {
+        "Mandant": {
+            text: "Der Mandant ist die höchste Hierarchieebene im SAP-System. Er stellt eine Einheit dar, die handelsrechtlich, organisatorisch und datentechnisch abgeschlossen ist. Verschiedene Mandanten werden durch Nummern identifiziert.",
+            link: "https://help.sap.com/doc/saphelp_46c/4.6c/de-DE/35/26b565afab52b9e10000009b38f974/content.htm?no_cache=true"
+        },
+        "Buchungskreis": {
+            text: "Der Buchungskreis ist die zentrale Einheit des externen Rechnungswesens. Er bildet ein rechtlich selbständiges Unternehmen mit eigener Bilanz und GuV ab (z.B. Global Bike Deutschland GmbH).",
+            link: "https://help.sap.com"
+        },
+        "Werk": {
+            text: "Ein Werk ist eine organisatorische Einheit, die das Unternehmen aus Sicht der Produktion, Beschaffung und Disposition gliedert. Hier werden Materialien produziert oder gelagert (z.B. Werk Heidelberg).",
+            link: "#"
+        },
+        "Lagerort": {
+            text: "Ein Lagerort ermöglicht die Unterscheidung von Beständen innerhalb eines Werkes. Die Inventur wird auf Lagerortebene durchgeführt (z.B. Zentrallager, Gefahrstofflager).",
+            link: "#"
+        },
+        "Verkaufsorganisation": {
+            text: "Eine organisatorische Einheit, die für den Vertrieb von Materialien und Leistungen verantwortlich ist. Sie verhandelt Verkaufskonditionen und haftet für Verkaufsabschlüsse (z.B. Deutschland Süd).",
+            link: "#"
+        },
+        "Vertriebsweg": {
+            text: "Der Weg, auf dem Waren zum Kunden gelangen. Beispiele sind Großhandel, Einzelhandel oder Direktvertrieb. Er bestimmt oft die Preisfindung.",
+            link: "#"
+        },
+        "Sparte": {
+            text: "Dient der Gruppierung von Materialien und Dienstleistungen. Unterschiedlichen Sparten können eigene Stammdaten und Konditionen zugeordnet werden (z.B. Bikes vs. Zubehör).",
+            link: "#"
+        },
+        "Vertriebsbereich": {
+            text: "Kombination aus Verkaufsorganisation, Vertriebsweg und Sparte. Definiert die genauen Konditionen, zu denen ein Kunde beliefert wird.",
+            link: "#"
+        },
+        "Debitor": {
+            text: "Ein Debitor ist ein Kunde, an den das Unternehmen Waren oder Dienstleistungen verkauft. Im SAP-System wird er als Geschäftspartner (Business Partner) geführt.",
+            link: "#"
+        },
+        "Kreditor": {
+            text: "Ein Kreditor ist ein Lieferant, von dem das Unternehmen Waren oder Dienstleistungen bezieht. Er wird ebenfalls als Geschäftspartner angelegt.",
+            link: "#"
+        },
+        "Abstimmkonto": {
+            text: "Ein Sachkonto im Hauptbuch, das die Summe der Verbindlichkeiten oder Forderungen aus dem Nebenbuch (Kreditoren/Debitoren) spiegelt. Es kann nicht direkt bebucht werden.",
+            link: "#"
+        },
+        "Incoterms": {
+            text: "Internationale Regeln für die Auslegung von handesüblichen Vertragsformeln (z.B. EXW - Ab Werk). Sie regeln den Gefahrenübergang und die Transportkosten.",
+            link: "#"
+        },
+        "Einkaufsinfosatz": {
+            text: "Verbindet ein Material mit einem Lieferanten. Er enthält spezifische Konditionen wie den Einkaufspreis, Lieferzeit und die normale Bestellmenge für diese Kombination.",
+            link: "#"
+        }
+    };
+
+    // Navigationsstruktur
+    const navStructure = [
+        {
+            id: "einkauf", title: "Einkauf", items: [
+                { 
+                    title: "Kreditorenstamm", 
+                    subItems: [
+                        { id: "kreditor_anlegen", title: "Kreditor anlegen" },
+                        { id: "kreditor_aendern", title: "Kreditor ändern" },
+                        { id: "kreditor_anzeigen", title: "Kreditor anzeigen" },
+                        { id: "lieferantenverzeichnis", title: "Lieferantenverzeichnis" }
+                    ]
+                },
+                {
+                    title: "Einkaufsinfosatz",
+                    subItems: [
+                        { id: "infosatz_anlegen", title: "Infosatz anlegen" },
+                        { id: "infosatz_aendern", title: "Infosatz ändern" },
+                        { id: "infosatz_anzeigen", title: "Infosatz anzeigen" },
+                        { id: "infosatz_lieferant", title: "Infosätze zum Lieferant" },
+                        { id: "infosatz_material", title: "Infosätze zum Material" }
+                    ]
+                },
+                {
+                    title: "Orderbuch",
+                    subItems: [
+                        { id: "orderbuch_pflegen", title: "Orderbuch pflegen" },
+                        { id: "orderbuch_aendern", title: "Orderbuch ändern" },
+                        { id: "orderbuch_anzeigen", title: "Orderbuch anzeigen" }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "verkauf", title: "Verkauf", items: [
+                {
+                    title: "Debitorenstamm",
+                    subItems: [
+                        { id: "debitor_anlegen", title: "Debitor anlegen" },
+                        { id: "debitor_aendern", title: "Debitor ändern" },
+                        { id: "debitor_anzeigen", title: "Debitor anzeigen" }
+                    ]
+                },
+                {
+                    title: "Konditionen",
+                    subItems: [
+                        { id: "kondition_anlegen", title: "Konditionen anlegen" },
+                        { id: "kondition_aendern", title: "Konditionen ändern" },
+                        { id: "kondition_anzeigen", title: "Konditionen anzeigen" }
+                    ]
+                },
+                {
+                    title: "Kontrakte",
+                    subItems: [
+                        { id: "kontrakt_anlegen", title: "Verkaufskontrakte anlegen" },
+                        { id: "kontrakt_aendern", title: "Verkaufskontrakte ändern" },
+                        { id: "kontrakt_anzeigen", title: "Verkaufskontrakte anzeigen" }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "material", title: "Material", items: [
+                {
+                    title: "Materialstamm",
+                    subItems: [
+                        { id: "material_anlegen", title: "Material anlegen" },
+                        { id: "material_aendern", title: "Material ändern" },
+                        { id: "material_anzeigen", title: "Material anzeigen" },
+                        { id: "materialverzeichnis", title: "Materialverzeichnis" },
+                        { id: "materialart_aendern", title: "Materialart ändern" },
+                        { id: "bewertungspreis_aendern", title: "Materialbewertungspreis ändern" }
+                    ]
+                },
+                {
+                    title: "Materialverfügbarkeit",
+                    subItems: [
+                        { id: "bestandsuebersicht", title: "Bestandsübersicht" },
+                        { id: "bedarfsliste", title: "Bedarfs-/Bestandsliste" }
+                    ]
+                }
+            ]
+        }
+    ];
+
+    // Inhalte (HTML-Strings)
+    const contentPages = {
+        // --- EINKAUF ---
+        "kreditor_anlegen": `
+            <h2>Kreditor anlegen (Lieferant)</h2>
+            <p>In dieser Anleitung lernen Sie, wie Sie einen neuen Lieferanten (Kreditor) im System anlegen. Dies erfolgt über die Geschäftspartner-Verwaltung.</p>
+            <h3>Schritt-für-Schritt Anleitung</h3>
+            <ol>
+                <li>Öffnen Sie die Transaktion <strong>Kreditor anlegen</strong> im Benutzermenü oder geben Sie den Transaktionscode ein.</li>
+                <li>Wählen Sie im Pop-up "Geschäftspartner anlegen als" den Typ <strong>Organisation</strong> aus.
+                    <div class="img-placeholder">Bild: Auswahl Geschäftspartner-Typ (Organisation)</div>
+                </li>
+                <li><strong>Rolle festlegen:</strong> Lassen Sie das Feld "Geschäftspartner" leer (interne Nummernvergabe) und wählen Sie im Feld "Gruppierung" den Wert <strong>Kreditor interne Nummernvergabe</strong>.</li>
+                <li><strong>Register Anschrift:</strong> Füllen Sie die Felder <em>Anrede, Name, Suchbegriff (Ihre Kennung), Straße, PLZ, Ort, Land</em> und <em>Sprache</em> aus.
+                    <div class="img-placeholder">Bild: Eingabemaske Anschrift</div>
+                </li>
+                <li>Klicken Sie auf das Register <strong>Steuernummern</strong> und tragen Sie die USt-IdNr. ein.</li>
+                <li>Klicken Sie auf <strong>Buchungskreis</strong> (oben in der Leiste). Geben Sie Ihren Buchungskreis ein (z.B. DE00) und drücken Sie Enter.</li>
+                <li>Ordnen Sie ein <strong>Abstimmkonto</strong> zu (z.B. Verbindlichkeiten a.LL.).
+                    <div class="img-placeholder">Bild: Buchungskreisdaten und Abstimmkonto</div>
+                </li>
+                <li>Wechseln Sie zur Sicht <strong>Einkauf</strong> (Button oben). Geben Sie die Einkaufsorganisation ein.</li>
+                <li>Pflegen Sie im Bereich Konditionen die <strong>Bestellwährung</strong> (EUR) und <strong>Zahlungsbedingungen</strong>.</li>
+                <li>Klicken Sie auf <strong>Sichern</strong> (Disketten-Symbol). Notieren Sie sich die vergebene Lieferantennummer.</li>
+            </ol>`,
+        
+        "kreditor_anzeigen": `
+            <h2>Kreditor anzeigen</h2>
+            <p>Zur Überprüfung der Stammdaten eines Lieferanten.</p>
+            <ol>
+                <li>Öffnen Sie die Transaktion <strong>Kreditor anzeigen</strong>.</li>
+                <li>Geben Sie die Lieferantennummer oder den Suchbegriff ein.</li>
+                <li>Wählen Sie die gewünschten Sichten (Allgemein, Buchungskreis, Einkauf) aus.</li>
+            </ol>`,
+
+        "infosatz_anlegen": `
+            <h2>Einkaufsinfosatz anlegen</h2>
+            <p>Der Einkaufsinfosatz verknüpft ein Material mit einem spezifischen Lieferanten und speichert Konditionen wie Preise und Lieferzeiten.</p>
+            <h3>Vorgehensweise</h3>
+            <ol>
+                <li>Starten Sie die Transaktion <strong>Infosatz anlegen</strong>.</li>
+                <li>Geben Sie folgende Daten ein:
+                    <ul>
+                        <li>Lieferant (Kreditor)</li>
+                        <li>Materialnummer</li>
+                        <li>Einkaufsorganisation</li>
+                        <li>Werk</li>
+                    </ul>
+                    Bestätigen Sie mit Enter.
+                    <div class="img-placeholder">Bild: Einstiegsmaske Infosatz anlegen</div>
+                </li>
+                <li><strong>Allgemeine Daten:</strong> Überprüfen Sie die Daten.</li>
+                <li><strong>EinkaufsorgDaten 1:</strong> Pflegen Sie die <em>Planlieferzeit</em>, <em>Einkäufergruppe</em>, <em>Normalmenge</em> und den <em>Nettopreis</em>.</li>
+                <li>Falls Staffelpreise vorliegen, klicken Sie auf <strong>Konditionen</strong> und erfassen Sie diese dort.</li>
+                <li>Klicken Sie auf <strong>Sichern</strong>.</li>
+            </ol>`,
+
+        // --- VERKAUF ---
+        "debitor_anlegen": `
+            <h2>Debitor anlegen (Kunde)</h2>
+            <p>Einen neuen Kunden im Vertriebsbereich anlegen. Beachten Sie, dass Sie den Kunden zuerst prüfen sollten (Dublettenprüfung).</p>
+            <h3>Anleitung</h3>
+            <ol>
+                <li>Wählen Sie die App/Transaktion <strong>Debitor anlegen</strong>.</li>
+                <li>Wählen Sie den Typ <strong>Organisation</strong>.</li>
+                <li>Wählen Sie bei Gruppierung <strong>Debitor interne Nummernvergabe</strong>.</li>
+                <li><strong>Allgemeine Daten:</strong> Erfassen Sie Name, Suchbegriff, Adresse (Straße, Ort, Land) und Kommunikationsdaten (Sprache).
+                    <div class="img-placeholder">Bild: Adressdaten Debitor</div>
+                </li>
+                <li>Wechseln Sie in die Rolle <strong>Debitor (Finanzbuchhaltung)</strong> bzw. klicken Sie auf <strong>Buchungskreis</strong>.</li>
+                <li>Geben Sie den Buchungskreis ein (z.B. DE00) und pflegen Sie das <strong>Abstimmkonto</strong> (Forderungen).</li>
+                <li>Wechseln Sie in die Rolle <strong>Debitor (Vertrieb)</strong> bzw. klicken Sie auf <strong>Vertrieb</strong>.</li>
+                <li>Geben Sie den Vertriebsbereich an (Verkaufsorganisation, Vertriebsweg, Sparte).</li>
+                <li><strong>Register Verkauf:</strong> Prüfen Sie Währung und Kalkulationsschema.</li>
+                <li><strong>Register Versand:</strong> Pflegen Sie die Lieferpriorität und das Auslieferungswerk.</li>
+                <li><strong>Register Faktura:</strong> Tragen Sie die Incoterms, Zahlungsbedingungen und die Steuerklassifikation (z.B. 1 für steuerpflichtig) ein.</li>
+                <li>Speichern Sie den Datensatz.</li>
+            </ol>`,
+
+        "debitor_anzeigen": `
+            <h2>Debitor anzeigen</h2>
+            <p>Recherche von Kundendaten in den Sichten Allgemein, Buchungskreis und Vertrieb.</p>
+            <ol>
+                <li>Starten Sie die Transaktion <strong>Debitor anzeigen</strong>.</li>
+                <li>Suchen Sie den Kunden über den Suchbegriff (Name oder Nummer).</li>
+                <li>Wählen Sie die Bereiche aus, die Sie sehen möchten (z.B. Vertriebsbereichsdaten, um Konditionen zu prüfen).</li>
+                <div class="img-placeholder">Bild: Anzeige der Vertriebsdaten</div>
+            </ol>`,
+
+        // --- MATERIAL ---
+        "material_anlegen": `
+            <h2>Material anlegen</h2>
+            <p>Erstellung eines neuen Materialstammsatzes (z.B. Handelsware) für verschiedene Fachbereiche.</p>
+            <h3>Schritt-für-Schritt</h3>
+            <ol>
+                <li>Öffnen Sie die Transaktion <strong>Material anlegen</strong>.</li>
+                <li>Geben Sie die Materialnummer (extern, z.B. FRTR1###), die Branche (z.B. Handel) und die Materialart (z.B. Handelsware) ein.
+                    <div class="img-placeholder">Bild: Einstieg Material anlegen</div>
+                </li>
+                <li><strong>Sichtenauswahl:</strong> Wählen Sie folgende Sichten:
+                    <ul>
+                        <li>Grunddaten 1</li>
+                        <li>Vertrieb: VerkOrgDaten 1 & 2</li>
+                        <li>Einkauf</li>
+                        <li>Disposition 1 & 2</li>
+                        <li>Buchhaltung 1</li>
+                    </ul>
+                </li>
+                <li><strong>Organisationsebenen:</strong> Geben Sie Werk, Lagerort und Vertriebsbereich (VerkOrg + Vertriebsweg) an.</li>
+                <li><strong>Grunddaten:</strong> Materialkurztext, Basismengeneinheit (ST), Warengruppe, Gewicht.</li>
+                <li><strong>Vertrieb:</strong> Auslieferungswerk, Steuerklassifikation (1), Verkaufspreis (unter Konditionen).</li>
+                <li><strong>Einkauf:</strong> Einkäufergruppe.</li>
+                <li><strong>Disposition:</strong> Dispomerkmal (z.B. PD oder VB), Losgröße (EX oder FX), Planlieferzeit.</li>
+                <li><strong>Buchhaltung:</strong> Bewertungsklasse und Preissteuerung (V oder S) sowie der Preis.</li>
+                <li>Speichern Sie das Material.</li>
+            </ol>`,
+        
+        "material_aendern": `
+            <h2>Material ändern</h2>
+            <p>Nutzen Sie diese Funktion, um z.B. Preise anzupassen oder das Material auf ein neues Werk zu erweitern.</p>
+            <ol>
+                <li>Transaktion <strong>Material ändern</strong> aufrufen.</li>
+                <li>Materialnummer eingeben.</li>
+                <li>Sicht auswählen (z.B. Einkauf, wenn sich die Lieferzeit ändert).</li>
+                <li>Daten anpassen und sichern.</li>
+            </ol>
+            <p><em>Hinweis: Bewertungspreise können oft nicht hier, sondern über eine gesonderte Preisanpassung geändert werden (siehe MR21).</em></p>`,
+
+        "bestandsuebersicht": `
+            <h2>Bestandsübersicht (MMBE)</h2>
+            <p>Zeigt an, wie viel Bestand eines Materials in welchem Werk und Lagerort verfügbar ist.</p>
+            <ol>
+                <li>Transaktion aufrufen.</li>
+                <li>Materialnummer und Werk eingeben.</li>
+                <li>Ausführen (F8). Sie sehen den "Frei verwendbaren Bestand".</li>
+                <div class="img-placeholder">Bild: Tabelle der Bestände</div>
+            </ol>`
+    };
+
+    // Standard-Text für nicht definierte Seiten
+    const defaultText = `
+        <h2>Information</h2>
+        <p>Für diesen Menüpunkt liegt derzeit keine detaillierte Schritt-für-Schritt Anleitung vor. 
+        Bitte nutzen Sie die allgemeine SAP-Hilfe oder wenden Sie sich an Ihren Key-User.</p>
+        <p>Mögliche Aktionen:</p>
+        <ul>
+            <li>Prüfen Sie, ob Sie die richtige Transaktion gewählt haben.</li>
+            <li>Suchen Sie im Suchfeld nach verwandten Begriffen.</li>
+        </ul>`;
+
+
+    // --- 2. LOGIK (Funktionen) ---
+
+    // Initialisierung
+    document.addEventListener("DOMContentLoaded", () => {
+        renderSidebar();
+        setupSearch();
+    });
+
+    // Sidebar rendern
+    function renderSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        let html = '';
+
+        navStructure.forEach(section => {
+            html += `<div class="nav-header" onclick="toggleSection('${section.id}')">
+                        ${section.title}
+                        <span class="arrow" id="arrow-${section.id}">&#9660;</span>
+                     </div>
+                     <ul class="sub-menu" id="menu-${section.id}">`;
+            
+            section.items.forEach(folder => {
+                html += `<li><strong>${folder.title}</strong></li>`;
+                folder.subItems.forEach(item => {
+                    html += `<li onclick="loadPage('${item.id}')" id="link-${item.id}">${item.title}</li>`;
+                });
+            });
+            html += `</ul>`;
+        });
+
+        sidebar.innerHTML = html;
+    }
+
+    // Accordion Toggle
+    function toggleSection(id) {
+        const menu = document.getElementById(`menu-${id}`);
+        const arrow = document.getElementById(`arrow-${id}`);
+        const isVisible = menu.style.display === "block";
+
+        // Alle schließen
+        document.querySelectorAll('.sub-menu').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.nav-header').forEach(el => el.classList.remove('active'));
+
+        // Gewähltes öffnen, wenn es zu war
+        if (!isVisible) {
+            menu.style.display = "block";
+            arrow.parentNode.classList.add('active');
+        }
+    }
+
+    // Seite laden und Lexikon-Logik anwenden
+    function loadPage(id) {
+        // Active Link Styling
+        document.querySelectorAll('.sub-menu li').forEach(el => el.classList.remove('active-link'));
+        const activeLink = document.getElementById(`link-${id}`);
+        if(activeLink) activeLink.classList.add('active-link');
+
+        // Content holen
+        let content = contentPages[id] || defaultText;
+
+        // Lexikon-Begriffe markieren
+        content = processLexicon(content);
+
+        // Rendern
+        const main = document.getElementById("mainContent");
+        main.innerHTML = `<div class="content-card fade-in">${content}</div>`;
+        
+        // Event Listener für die neuen ? Icons hinzufügen
+        document.querySelectorAll('.term-highlight').forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.stopPropagation(); // Verhindert Bubbling
+                showDefinition(el.dataset.term);
+            });
+        });
+    }
+
+    // Text nach Lexikon-Begriffen scannen und wrappen
+    function processLexicon(html) {
+        let newHtml = html;
+        // Sortieren nach Länge (längste zuerst), damit "Material" nicht in "Materialstamm" ersetzt wird
+        const terms = Object.keys(lexiconData).sort((a, b) => b.length - a.length);
+
+        terms.forEach(term => {
+            // Regex: Wortgrenzen beachten, Case Insensitive, nur erstes Vorkommen pro Absatz (vereinfacht: global)
+            // Wir nutzen eine komplexe Regex, um nicht innerhalb von HTML-Tags zu ersetzen
+            const regex = new RegExp(`(?<!<[^>]*)\\b(${term})\\b`, 'gi'); 
+            
+            // Einfache Ersetzung (kann bei HTML-Attributen fehleranfällig sein, für diesen Scope aber ausreichend)
+            // Wir ersetzen das Wort durch einen Span mit Klasse
+            newHtml = newHtml.replace(regex, `<span class="term-highlight" data-term="${term}">$1</span>`);
+        });
+        return newHtml;
+    }
+
+    // Modal anzeigen
+    function showDefinition(termKey) {
+        // Case insensitive Suche im Dictionary
+        const key = Object.keys(lexiconData).find(k => k.toLowerCase() === termKey.toLowerCase());
+        if (!key) return;
+
+        const data = lexiconData[key];
+        document.getElementById('modalTitle').innerText = key;
+        document.getElementById('modalText').innerText = data.text;
+        document.getElementById('modalLink').href = data.link;
+        
+        const modal = document.getElementById('definitionModal');
+        modal.style.display = 'flex';
+    }
+
+    // Modal schließen
+    function closeModal() {
+        document.getElementById('definitionModal').style.display = 'none';
+    }
+
+    // Schließen bei Klick außerhalb
+    window.onclick = function(event) {
+        const modal = document.getElementById('definitionModal');
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+
+    // Suche Setup
+    function setupSearch() {
+        const input = document.getElementById('searchInput');
+        const resultsBox = document.getElementById('searchResults');
+
+        input.addEventListener('keyup', (e) => {
+            const query = e.target.value.toLowerCase();
+            resultsBox.innerHTML = '';
+            
+            if (query.length < 2) {
+                resultsBox.style.display = 'none';
+                return;
+            }
+
+            let matches = [];
+
+            // Suche in Navigationstiteln
+            navStructure.forEach(sec => {
+                sec.items.forEach(cat => {
+                    cat.subItems.forEach(item => {
+                        if (item.title.toLowerCase().includes(query)) {
+                            matches.push({ id: item.id, title: item.title, type: 'Navigation' });
+                        }
+                    });
+                });
+            });
+
+            // Suche in Lexikon
+            Object.keys(lexiconData).forEach(term => {
+                if (term.toLowerCase().includes(query)) {
+                    matches.push({ id: null, title: term, type: 'Lexikon', text: lexiconData[term].text });
+                }
+            });
+
+            if (matches.length > 0) {
+                resultsBox.style.display = 'block';
+                matches.forEach(match => {
+                    const div = document.createElement('div');
+                    div.className = 'result-item';
+                    if (match.type === 'Navigation') {
+                        div.innerHTML = `<strong>${match.title}</strong><small>Anleitung öffnen</small>`;
+                        div.onclick = () => {
+                            loadPage(match.id);
+                            // Sidebar Ordner öffnen logik wäre hier nice-to-have
+                            resultsBox.style.display = 'none';
+                            input.value = '';
+                        };
+                    } else {
+                        div.innerHTML = `<strong>${match.title}</strong><small>Definition anzeigen</small>`;
+                        div.onclick = () => {
+                            showDefinition(match.title);
+                            resultsBox.style.display = 'none';
+                        };
+                    }
+                    resultsBox.appendChild(div);
+                });
+            } else {
+                resultsBox.style.display = 'none';
+            }
+        });
+        
+        // Klick außerhalb schließt Suche
+        document.addEventListener('click', function(e) {
+            if (!input.contains(e.target) && !resultsBox.contains(e.target)) {
+                resultsBox.style.display = 'none';
+            }
+        });
+    }
+
+</script>
+
+</body>
+</html>
