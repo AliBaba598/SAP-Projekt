@@ -749,12 +749,12 @@
             <div class="info-box"><p>Ein <strong>Debitor</strong> ist im SAP-Sprachgebrauch ein Kunde – also ein Unternehmen oder eine Person, an die die Global Bike Deutschland GmbH Waren verkauft.</p></div>
 
             <h2>Die drei Datensichten</h2>
-            <p>Debitorenstammdaten werden in drei Sichten (Bereichen) gepflegt, die unterschiedliche Abteilungen betreffen:</p>
+            <p>Debitorenstammdaten sind in SAP hierarchisch aufgebaut, damit Informationen nicht redundant gepflegt werden müssen:</p>
             <table class="org-table">
                 <tr><th>Sicht</th><th>Enthält</th><th>Beispiel</th></tr>
-                <tr><td><strong>Allgemeine Daten</strong></td><td>Mandantenweite Daten – für das ganze Unternehmen gültig</td><td>Adresse, Bankverbindung, Steuernummer</td></tr>
-                <tr><td><strong>Buchungskreis</strong></td><td>Buchhaltungsrelevante Daten</td><td>Abstimmkonto, Ansprechpartner, Zahlungshistorie</td></tr>
-                <tr><td><strong>Vertrieb</strong></td><td>Vertriebsbereichsbezogene Daten</td><td>Auslieferungswerk, Zahlungsbedingungen, Incoterms</td></tr>
+                <tr><td><strong>Allgemeine Daten</strong></td><td>Mandantenweite Daten – für das ganze Unternehmen gültig</td><td>Name, Anschrift, Telefonnummer, Bankverbindung</td></tr>
+                <tr><td><strong>Buchungskreis</strong></td><td>Buchhaltungsrelevante Daten (FI)</td><td>Abstimmkonto, Zahlungsbedingungen, Mahnverfahren, Ansprechpartner</td></tr>
+                <tr><td><strong>Vertrieb</strong></td><td>Vertriebsbereichsbezogene Daten (SD)</td><td>Lieferprioritäten, Versandbedingungen, Preisfindungsgruppe, Incoterms</td></tr>
             </table>
 
             <h2>Wichtige Transaktionen</h2>
@@ -892,18 +892,44 @@
         "kreditor_aendern": `
             <h2>Kreditor ändern <span class="transaction-code">XK02</span></h2>
             <p>Ändern von Stammdaten eines bestehenden Lieferanten.</p>
-            <ol>
-                <li>Transaktion starten.</li>
-                <li>Kreditorennummer eingeben.</li>
-                <li>Zu ändernde Sichten auswählen (z.B. Anschrift).</li>
-                <li>Daten korrigieren und speichern.</li>
-            </ol>
+            <h3>Schritt 1: Transaktion aufrufen</h3>
+            <ul>
+                <li>Gehen Sie in Ihrem Favoritenmenü auf die Transaktion <strong>„Kreditor ändern"</strong> unter Stammdaten → Einkauf → Kreditorenstamm.</li>
+            </ul>
+            <h3>Schritt 2: Sicht wechseln und Daten ändern</h3>
+            <ul>
+                <li>Wechseln Sie auf die Sicht, in der sich die zu ändernden Stammdaten befinden.</li>
+                <li>Sie erkennen den Ändern-Modus daran, dass die Textfelder einen <strong>weißen Hintergrund</strong> haben.</li>
+                <li>Tragen Sie die zu ändernden Daten ein.</li>
+            </ul>
+            <h3>Schritt 3: Speichern</h3>
+            <ul>
+                <li>Klicken Sie auf den Button <strong>„Sichern"</strong> in der Fußzeile.</li>
+                <li>Die Änderung wird mit einer Meldung in der <strong>Statusleiste</strong> bestätigt.</li>
+            </ul>
             <div class="img-placeholder">Bild: Kreditor ändern Einstieg</div>
         `,
         "kreditor_anzeigen": `
             <h2>Kreditor anzeigen <span class="transaction-code">XK03</span></h2>
-            <p>Einsicht in die Stammdaten ohne Änderungsmöglichkeit.</p>
-            <div class="img-placeholder">Bild: Anzeige Kreditor</div>
+            <h3>Schritt 1: Transaktion aufrufen</h3>
+            <ul>
+                <li>Suchen Sie in Ihrem Favoritenmenü die Transaktion <strong>„Kreditor anzeigen"</strong> unter Stammdaten → Einkauf → Kreditorenstamm.</li>
+            </ul>
+            <h3>Schritt 2: Geschäftspartner suchen</h3>
+            <ul>
+                <li>Klicken Sie im Pop-Up auf das Kästchen neben dem Eingabefeld für die erweiterte Suche nach dem Geschäftspartner, falls die Geschäftspartner-Nummer nicht vorhanden ist.</li>
+                <li>Im Feld <strong>„Name1/Nachnahme"</strong> wird der Name eingegeben. Im Feld <strong>„Geschäftspartner"</strong> geben Sie ein <code>*</code> und Ihre SAP-Kennnummer ein.</li>
+                <li>Klicken Sie auf <strong>„Suche starten"</strong> – es werden nur die für Sie bestimmten Geschäftspartner angezeigt.</li>
+            </ul>
+            <div class="tip-box"><p>💡 <strong>Tipp:</strong> Das <code>*</code> kann auch beim Feld „Name1/Nachnahme" eingesetzt werden, um nicht den kompletten Namen eintippen zu müssen. Alle für Sie bestimmten Stammdaten enden mit Ihrer persönlichen SAP-Kennnummer <strong>###</strong>.</p></div>
+            <h3>Schritt 3: Stammdaten einsehen</h3>
+            <ul>
+                <li>Sie sehen die <strong>Allgemeinen Daten</strong> des Kreditors: mandantenweite Daten wie Anschrift, Steuernummern und Bankverbindung des Lieferanten.</li>
+                <li>In der Funktionsleiste finden Sie die weiteren Sichten <strong>Buchungskreis</strong> und <strong>Einkauf</strong>.</li>
+                <li>In der Sicht <strong>Buchungskreis</strong>: Angaben zur Kontoführung (z.B. Abstimmkonto) und Korrespondenz (z.B. Ansprechpartner).</li>
+                <li>In der Sicht <strong>Einkauf</strong>: alle einkaufsrelevanten Daten des Lieferanten.</li>
+            </ul>
+            <div class="img-placeholder">Bild: Allgemeine Daten Kreditor</div>
         `,
         "lieferantenverzeichnis": `
             <h2>Lieferantenverzeichnis <span class="transaction-code">MKVZ</span></h2>
@@ -933,18 +959,40 @@
         `,
         "infosatz_anzeigen": `
             <h2>Infosatz anzeigen <span class="transaction-code">ME13</span></h2>
-            <p>Inhalt folgt...</p>
-            <div class="img-placeholder">Platzhalter</div>
+            <h3>Schritt 1: Transaktion aufrufen</h3>
+            <ul>
+                <li>Suchen Sie in Ihrem Favoritenmenü die Transaktion <strong>„Infosatz anzeigen"</strong> unter Stammdaten → Einkauf → Einkaufsinfosatz.</li>
+            </ul>
+            <h3>Schritt 2: Organisationsdaten eingeben</h3>
+            <ul>
+                <li>Geben Sie im Suchfenster die ermittelten Organisationsdaten ein und bestätigen Sie mit der <strong>Enter-Taste</strong>.</li>
+                <li>In den verschiedenen Sichten der Transaktion (<strong>Allgemeine Daten</strong>, <strong>EinkaufsorgDaten 1</strong> und <strong>Konditionen</strong>) können die hinterlegten Daten zur jeweiligen Lieferanten-Material-Einkaufsorganisation-Kombination eingesehen werden.</li>
+            </ul>
+            <h3>Schritt 3: Details abrufen</h3>
+            <ul>
+                <li>Um nähere Informationen zu einem gefundenen Infosatz zu erhalten, führen Sie einen <strong>Doppelklick</strong> auf die entsprechende Anzeige aus.</li>
+            </ul>
+            <div class="img-placeholder">Bild: Infosatz Anzeige ME13</div>
         `,
         "infosatz_lieferant": `
             <h2>Infosätze zum Lieferant <span class="transaction-code">ME1M</span></h2>
-            <p>Inhalt folgt...</p>
-            <div class="img-placeholder">Platzhalter</div>
+            <p>Die Suche nach Einkaufsinfosätzen zu einem bestimmten Lieferanten erfolgt über die Transaktion <strong>„Infosaetze zum Lieferant"</strong>.</p>
+            <ul>
+                <li>Geben Sie im Suchfenster die Lieferantennummer ein.</li>
+                <li>Um das größtmögliche Suchergebnis zu erhalten, leeren Sie alle anderen Felder und deaktivieren Sie vorhandene Häkchen.</li>
+                <li>Klicken Sie auf den Button <strong>„Ausführen"</strong>, um die Suche zu starten. Die Enter-Taste funktioniert hier nicht.</li>
+            </ul>
+            <div class="img-placeholder">Bild: Infosätze zum Lieferant</div>
         `,
         "infosatz_material": `
             <h2>Infosätze zum Material</h2>
-            <p>Inhalt folgt...</p>
-            <div class="img-placeholder">Platzhalter</div>
+            <p>Die Suche nach Einkaufsinfosätzen zu einem bestimmten Material erfolgt über die Transaktion <strong>„Infosaetze zum Material"</strong>.</p>
+            <ul>
+                <li>Geben Sie im Suchfenster nur die entsprechende Materialnummer ein.</li>
+                <li>Leeren Sie alle anderen Felder und deaktivieren Sie vorhandene Häkchen, um das größtmögliche Suchergebnis zu erhalten.</li>
+                <li>Klicken Sie auf den Button <strong>„Ausführen"</strong>, um die Suche zu starten. Die Enter-Taste funktioniert hier nicht.</li>
+            </ul>
+            <div class="img-placeholder">Bild: Infosätze zum Material</div>
         `,
         "orderbuch_pflegen": `
             <h2>Orderbuch pflegen <span class="transaction-code">ME01</span></h2>
@@ -959,8 +1007,13 @@
         `,
         "orderbuch_anzeigen": `
             <h2>Orderbuch anzeigen <span class="transaction-code">ME03</span></h2>
-            <p>Inhalt folgt...</p>
-            <div class="img-placeholder">Platzhalter</div>
+            <p>Zeigt an, welche Lieferanten für ein Material in einem bestimmten Zeitraum und Werk zugelassen sind.</p>
+            <ol>
+                <li>Material und Werk eingeben.</li>
+                <li>Mit <strong>Enter</strong> oder <strong>Ausführen</strong> die Anzeige aufrufen.</li>
+                <li>Die Liste zeigt Gültigkeitszeitraum, Lieferant und Einkaufsorganisation.</li>
+            </ol>
+            <div class="img-placeholder">Bild: Orderbuch Anzeige ME03</div>
         `,
 
         // ══════════════════════════════════════════════════════
@@ -1031,9 +1084,26 @@
             </ul>
         `,
         "debitor_anzeigen": `
-            <h2>Debitor anzeigen</h2>
-            <p>Inhalt folgt...</p>
-            <div class="img-placeholder">Platzhalter</div>
+            <h2>Debitorenstammdaten anzeigen</h2>
+            <h3>Schritt 1: Transaktion aufrufen</h3>
+            <ul>
+                <li>Suchen Sie in Ihrem Favoritenmenü die Transaktion <strong>„Debitor anzeigen"</strong> unter Stammdaten → Verkauf → Debitorenstamm.</li>
+            </ul>
+            <h3>Schritt 2: Geschäftspartner suchen</h3>
+            <ul>
+                <li>Klicken Sie im Pop-Up auf das Kästchen neben dem Eingabefeld für die erweiterte Suche nach dem Geschäftspartner, falls die Geschäftspartner-Nummer nicht vorhanden ist.</li>
+                <li>Im Feld <strong>„Name1/Nachnahme"</strong> wird der Name eingegeben. Im Feld <strong>„Geschäftspartner"</strong> geben Sie ein <code>*</code> und Ihre SAP-Kennnummer ein.</li>
+                <li>Klicken Sie auf <strong>„Suche starten"</strong> – es werden nur die für Sie bestimmten Geschäftspartner angezeigt.</li>
+            </ul>
+            <div class="tip-box"><p>💡 <strong>Tipp:</strong> Das <code>*</code> kann auch beim Feld „Name1/Nachnahme" eingesetzt werden, um nicht den kompletten Namen eintippen zu müssen. Alle für Sie bestimmten Stammdaten enden mit Ihrer persönlichen SAP-Kennnummer <strong>###</strong>.</p></div>
+            <h3>Schritt 3: Stammdaten einsehen</h3>
+            <ul>
+                <li>Sie sehen die <strong>Allgemeinen Daten</strong> des Debitors: mandantenweite Daten wie Anschrift, Steuernummern und Bankverbindung.</li>
+                <li>In der Funktionsleiste finden Sie die weiteren Sichten <strong>Buchungskreis</strong> und <strong>Vertrieb</strong>.</li>
+                <li>In der Sicht <strong>Buchungskreis</strong>: Angaben zur Kontoführung (z.B. Abstimmkonto) und Korrespondenz (z.B. Ansprechpartner).</li>
+                <li>In der Sicht <strong>Vertrieb</strong>: alle vertriebsrelevanten Daten. Vor dem Zugriff muss der entsprechende Vertriebsbereich eingetragen werden. Nutzen Sie den Button <strong>„Vertriebsbereiche"</strong> oder das Werthilfesymbol, um herauszufinden, für welche Vertriebsbereiche der Kunde gepflegt ist.</li>
+            </ul>
+            <div class="img-placeholder">Bild: Allgemeine Daten Debitor</div>
         `,
         "kondition_anlegen": `
             <h2>Konditionen anlegen <span class="transaction-code">VK11</span></h2>
@@ -1096,13 +1166,45 @@
         `,
         "material_aendern": `
             <h2>Material ändern <span class="transaction-code">MM02</span></h2>
-            <p>Inhalt folgt...</p>
-            <div class="img-placeholder">Platzhalter</div>
+            <h3>Schritt 1: Transaktion aufrufen und Material auswählen</h3>
+            <ul>
+                <li>Gehen Sie in Ihrem Favoritenmenü auf <strong>„Material ändern"</strong> und wählen Sie das zu bearbeitende Material aus.</li>
+            </ul>
+            <h3>Schritt 2: Sichten auswählen und Daten bearbeiten</h3>
+            <ul>
+                <li>Wählen Sie die Sichten aus, die für die Bearbeitung relevant sind.</li>
+                <li>Nehmen Sie die gewünschten Änderungen vor.</li>
+            </ul>
+            <div class="warn-box"><p>⚠️ <strong>Hinweis:</strong> Beachten Sie, dass immer nur Organisationsdaten geändert oder ergänzt werden können, die im Kontext der aktuell geöffneten Sicht relevant sind.</p></div>
+            <div class="img-placeholder">Bild: Material ändern MM02</div>
         `,
         "material_anzeigen": `
             <h2>Material anzeigen <span class="transaction-code">MM03</span></h2>
-            <p>Inhalt folgt...</p>
-            <div class="img-placeholder">Platzhalter</div>
+            <h3>Schritt 1: Transaktion aufrufen</h3>
+            <ul>
+                <li>Suchen Sie in Ihrem Favoritenmenü die Transaktion <strong>„Material anzeigen"</strong>.</li>
+            </ul>
+            <h3>Schritt 2: Material suchen</h3>
+            <ul>
+                <li>Geben Sie im nachfolgenden Feld die Materialnummer ein. Falls diese nicht bekannt ist, klicken Sie auf das Kästchen neben dem Eingabefeld.</li>
+                <li>Im geöffneten Pop-Up: Feld <strong>„Materialkurztext"</strong> – Name des Materials eingeben; Feld <strong>„Material"</strong> – ein <code>*</code> und Ihre SAP-Kennnummer eingeben. Klicken Sie auf <strong>„Suchen"</strong>.</li>
+                <li>Klicken Sie das richtige Suchergebnis an und drücken Sie <strong>Enter</strong>, um die Sichtenauswahl aufzurufen.</li>
+            </ul>
+            <h3>Schritt 3: Sichten auswählen</h3>
+            <ul>
+                <li>Wählen Sie die Sichten, die Sie einsehen wollen, indem Sie das Kästchen links neben den Sichten anklicken. Bestätigen Sie Ihre Auswahl mit dem grünen Haken.</li>
+            </ul>
+            <h3>Schritt 4: Organisationsdaten eingeben</h3>
+            <ul>
+                <li>Geben Sie die ermittelten Organisationsdaten in die jeweiligen Felder ein. Das Feld <strong>„Bewertungsart"</strong> wird dabei nicht ausgefüllt. Drücken Sie anschließend <strong>Enter</strong>.</li>
+            </ul>
+            <h3>Schritt 5: Daten einsehen</h3>
+            <ul>
+                <li>Das SAP-System zeigt die Materialstammdaten in der Sicht <strong>„Grunddaten"</strong>. Die anderen ausgewählten Sichten können durch Klick auf den entsprechenden Reiter angezeigt werden.</li>
+                <li>Stehen in Textfeldern nur Schlüsselwerte, kann deren Bedeutung über das Hilfekästchen neben dem Textfeld herausgefunden werden.</li>
+            </ul>
+            <div class="tip-box"><p>💡 <strong>Tipp:</strong> Ein Wechsel in andere Organisationsebenen (z.B. von Werk Heidelberg zu Werk Hamburg) ist über den Button <strong>„OrgEbenen"</strong> möglich. Die Listenverkaufspreise für verschiedene Vertriebswege (EH, GH oder DV) finden sich in der Sicht „Vertrieb: VerkOrg" hinter dem Button <strong>„Konditionen"</strong>.</p></div>
+            <div class="img-placeholder">Bild: Sichtenauswahl MM03</div>
         `,
         "materialverzeichnis": `
             <h2>Materialverzeichnis <span class="transaction-code">MM60</span></h2>
@@ -1127,8 +1229,14 @@
         `,
         "bestandsuebersicht": `
             <h2>Bestandsübersicht <span class="transaction-code">MMBE</span></h2>
-            <p>Inhalt folgt...</p>
-            <div class="img-placeholder">Platzhalter</div>
+            <p>Zeigt den aktuellen Materialbestand aufgeteilt nach Werk und Lagerort.</p>
+            <ol>
+                <li>Materialnummer und ggf. Werk eingeben.</li>
+                <li>Ausführen (F8).</li>
+                <li>Die Übersicht zeigt den Bestand auf verschiedenen Ebenen: Mandant, Buchungskreis, Werk und Lagerort.</li>
+            </ol>
+            <div class="info-box"><p>📌 Die Bestandsübersicht entspricht der Sicht <strong>„Lagerortbestand"</strong> im Materialstamm und gibt Auskunft über die mengenmäßige Verfügbarkeit eines Materials.</p></div>
+            <div class="img-placeholder">Bild: MMBE Bestandsübersicht</div>
         `,
         "md04": `
             <h2>Bedarfs-/Bestandsliste <span class="transaction-code">MD04</span></h2>
@@ -1163,7 +1271,7 @@
                 <tr><td>3</td><td>Werk / Verkaufsorganisation</td></tr>
                 <tr><td>4 (niedrigste)</td><td>Lagerort / Vertriebsweg / Sparte</td></tr>
             </table>
-            <div class="info-box"><p>📌 <strong>Bei Global Bike:</strong> Alle Schüler arbeiten im selben Mandanten. Die Mandantennummer erhalten Sie von Ihrer Lehrkraft.</p></div>
+            <div class="info-box"><p>📌 <strong>Bei Global Bike:</strong> Alle Schüler arbeiten im selben Mandanten. Die Mandantennummer erhalten Sie von Ihrem Vorgesetzten.</p></div>
         `,
 
         "def_buchungskreis": `
@@ -1600,4 +1708,3 @@
 </script>
 </body>
 </html>
-
