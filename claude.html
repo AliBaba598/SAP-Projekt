@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAP Stammdaten Guide</title>
+    <style>
+        :root {
+            --sap-shell-bg: #354a5f;
+            --sap-bg: #eff4f9;
+            --sap-card-bg: #ffffff;
+            --sap-text: #32363a;
+            --sap-primary: #0070b1;
+            --sap-hover: #eef5fa;
+            --sap-border: #d9d9d9;
+            --sap-header-height: 48px;
+            --sidebar-width: 320px;
+        }
+
+        body {
+            margin: 0;
+            font-family: "72", "Arial", sans-serif;
+            background-color: var(--sap-bg);
+            color: var(--sap-text);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--sap-shell-bg);
+            height: var(--sap-header-height);
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-right: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .search-container {
+            flex-grow: 1;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 34px;
+            padding: 0 40px 0 10px;
+            border-radius: 4px;
+            border: none;
+            outline: none;
+            font-size: 0.9rem;
+            background-color: #fff;
+            color: #333;
+            box-sizing: border-box;
+            transition: box-shadow 0.2s;
+        }
+
+        .search-input:focus {
+            box-shadow: 0 0 0 2px var(--sap-primary);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--sap-primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: #fff;
+            border-right: 1px solid var(--sap-border);
+            overflow-y: auto;
+            flex-shrink: 0;
+            padding-top: 10px;
+        }
+
+        .nav-category {
+            padding: 12px 20px;
+            font-weight: bold;
+            color: var(--sap-primary);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid transparent;
+            font-size: 1rem;
+        }
+
+        .nav-category:hover {
+            background-color: var(--sap-hover);
+        }
+
+        .nav-category .arrow {
+            font-size: 0.7rem;
+            transition: transform 0.2s;
+            color: #666;
+        }
+
+        .nav-category.active .arrow {
+            transform: rotate(180deg);
+        }
+
+        .sub-menu {
+            display: none;
+            padding-bottom: 10px;
+        }
+
+        .nav-group-header {
+            padding: 15px 20px 5px 30px;
+            font-weight: bold;
+            color: #555;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item {
+            padding: 8px 20px 8px 30px;
+            font-size: 0.9rem;
+            color: var(--sap-text);
+            cursor: pointer;
+            border-left: 4px solid transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background-color: var(--sap-hover);
+        }
+
+        .nav-item.active-link {
+            border-left-color: var(--sap-primary);
+            background-color: #e8f2fa;
+            font-weight: 500;
+            color: var(--sap-primary);
+        }
+
+        .help-icon {
+            width: 18px;
+            height: 18px;
+            background-color: #ddd;
+            color: #666;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.2s, background-color 0.2s;
+            margin-left: 10px;
+            flex-shrink: 0;
+        }
+
+        .nav-item:hover .help-icon {
+            opacity: 1;
+        }
+
+        .help-icon:hover {
+            background-color: var(--sap-primary);
+            color: white;
+            cursor: help;
+        }
+
+        .content-area {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            background-color: var(--sap-bg);
+        }
+
+        .content-card {
+            background: var(--sap-card-bg);
+            border-radius: 4px;
+            box-shadow: 0 1px 15px rgba(0,0,0,0.05);
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto 50px auto;
+            border-top: 5px solid var(--sap-primary);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 { margin-top: 0; color: #333; font-size: 1.8rem; }
+        h2 { color: var(--sap-shell-bg); border-bottom: 1px solid #ccc; padding-bottom: 8px; margin-top: 30px; font-size: 1.4rem;}
+        h3 { font-size: 1.1rem; color: #444; margin-top: 25px; margin-bottom: 10px;}
+        p, li { line-height: 1.6; color: #333; margin-bottom: 10px; }
+        strong { color: #000; }
+
+        .transaction-code {
+            background-color: #e1f1fc;
+            color: var(--sap-primary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-weight: bold;
+            margin-left: 10px;
+            font-size: 0.9rem;
+        }
+
+        .img-placeholder {
+            background-color: #f4f4f4;
+            border: 2px dashed #999;
+            color: #666;
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0;
+            border-radius: 6px;
+            font-style: italic;
+        }
+
+        .img-placeholder::before {
+            content: "📷";
+            display: block;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        /* Info-Box für Einleitung */
+        .info-box {
+            background-color: #e8f2fa;
+            border-left: 4px solid var(--sap-primary);
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .info-box p { margin: 0; color: #1a5276; }
+
+        /* Tipp-Box */
+        .tip-box {
+            background-color: #eafaf1;
+            border-left: 4px solid #27ae60;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .tip-box p { margin: 0; color: #1e8449; }
+
+        /* Warn-Box */
+        .warn-box {
+            background-color: #fef9e7;
+            border-left: 4px solid #f39c12;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .warn-box p { margin: 0; color: #9a7d0a; }
+
+        /* Org-Chart Tabelle */
+        .org-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .org-table th {
+            background-color: var(--sap-shell-bg);
+            color: white;
+            padding: 10px 15px;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+        .org-table td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+            vertical-align: top;
+        }
+        .org-table tr:nth-child(even) td { background-color: #f8fbfd; }
+
+        /* Definition-Badge */
+        .def-badge {
+            display: inline-block;
+            background-color: var(--sap-primary);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        /* Popover */
+        .popover {
+            position: fixed;
+            background: white;
+            border: 1px solid #ccc;
+            border-left: 5px solid var(--sap-primary);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            padding: 15px;
+            width: 300px;
+            z-index: 2000;
+            display: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .popover h4 {
+            margin: 0 0 10px 0;
+            color: var(--sap-primary);
+            font-size: 1rem;
+        }
+
+        .popover .more-link {
+            display: block;
+            margin-top: 10px;
+            text-align: right;
+            color: var(--sap-primary);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .popover .more-link:hover { text-decoration: underline; }
+
+        .term-highlight {
+            border-bottom: 1px dotted var(--sap-primary);
+            color: var(--sap-primary);
+            cursor: help;
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%; left: 0; right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1500;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .search-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+        .search-item:hover { background-color: #f0f0f0; }
+        .search-item strong { display: block; color: var(--sap-primary); }
+        .search-item small { color: #888; }
+
+        /* Interne Navigation Links */
+        .internal-link {
+            color: var(--sap-primary);
+            cursor: pointer;
+            text-decoration: underline;
+            font-weight: 500;
+        }
+        .internal-link:hover { color: var(--sap-shell-bg); }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo" onclick="loadContent('welcome')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="white" style="margin-right:8px;"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5 9.5 9.75 12 11zm0 2.5l-5-2.5-5 2.5 10 5 10-5-5-2.5-5 2.5z"/></svg>
+            SAP Guide
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Suche nach Begriffen oder Transaktionen...">
+            <span class="search-icon">&#128269;</span>
+            <div id="searchResults" class="search-results"></div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <nav class="sidebar" id="sidebar"></nav>
+        <main class="content-area" id="mainContent"></main>
+    </div>
+
+    <div id="popover" class="popover" onmouseleave="hidePopover()">
+        <h4 id="popTitle">Titel</h4>
+        <div id="popText">Beschreibung...</div>
+        <a id="popLink" class="more-link" onclick="navigateFromPopover()">→ Zur vollständigen Definition</a>
+    </div>
+
+<script>
+    // ---------------------------------------------------------
+    // 1. LEXIKON & MAPPING zu internen Seiten
+    // ---------------------------------------------------------
+    const lexicon = {
+        "Mandant": {
+            text: "Der Mandant ist die höchste Hierarchieebene im SAP-System. Er stellt eine betriebswirtschaftlich, organisatorisch und datentechnisch abgeschlossene Einheit dar.",
+            pageId: "def_mandant"
+        },
+        "Buchungskreis": {
+            text: "Der Buchungskreis ist die kleinste organisatorische Einheit des externen Rechnungswesens, für die eine vollständige, in sich abgeschlossene Buchhaltung abgebildet werden kann.",
+            pageId: "def_buchungskreis"
+        },
+        "Einkaufsorganisation": {
+            text: "Eine organisatorische Einheit innerhalb der Logistik, die das Unternehmen nach den Anforderungen des Einkaufs gliedert. Sie verhandelt Einkaufskonditionen mit Lieferanten.",
+            pageId: "def_einkaufsorganisation"
+        },
+        "Werk": {
+            text: "Ein Werk ist eine organisatorische Einheit in der Logistik, die das Unternehmen aus Sicht der Produktion, Beschaffung, Instandhaltung und Disposition gliedert.",
+            pageId: "def_werk"
+        },
+        "Lagerort": {
+            text: "Ein Lagerort ist eine organisatorische Einheit, die eine Unterscheidung von Materialbeständen innerhalb eines Werkes ermöglicht.",
+            pageId: "def_lagerort"
+        },
+        "Debitor": {
+            text: "Ein Debitor ist ein Geschäftspartner, gegenüber dem Forderungen aus Lieferungen und Leistungen bestehen (= Kunde).",
+            pageId: "def_debitor"
+        },
+        "Kreditor": {
+            text: "Ein Kreditor ist ein Geschäftspartner, dem gegenüber Verbindlichkeiten bestehen (= Lieferant).",
+            pageId: "def_kreditor"
+        },
+        "Einkaufsinfosatz": {
+            text: "Der Einkaufsinfosatz speichert Informationen über die Beziehung zwischen einem bestimmten Material und einem bestimmten Lieferanten, z.B. Einkaufspreis und Planlieferzeit.",
+            pageId: "def_einkaufsinfosatz"
+        },
+        "Orderbuch": {
+            text: "Das Orderbuch legt fest, von welchen Bezugsquellen (Lieferanten) ein Material innerhalb eines bestimmten Zeitraums beschafft werden darf oder muss.",
+            pageId: "def_orderbuch"
+        },
+        "Konditionen": {
+            text: "Konditionen sind Stammdaten für die Preisfindung in Einkauf und Verkauf: Preise, Rabatte, Zuschläge, Frachtkosten und Steuern.",
+            pageId: "def_konditionen"
+        },
+        "Kontrakt": {
+            text: "Ein Kontrakt ist ein langfristiger Rahmenvertrag mit einem Lieferanten oder Kunden. Man unterscheidet Mengenkontrakte und Wertkontrakte.",
+            pageId: "def_kontrakt"
+        },
+        "Materialart": {
+            text: "Die Materialart gruppiert Materialien mit gleichen Eigenschaften (z.B. Rohstoffe, Handelswaren, Fertigerzeugnisse) und steuert die Nummernvergabe und Bildschirmauswahl.",
+            pageId: "def_materialart"
+        },
+        "Incoterms": {
+            text: "International Commercial Terms – internationale Regeln zur Auslegung handelsüblicher Vertragsformeln (z.B. EXW, DAP). Sie regeln Kosten, Risiken und Verpflichtungen.",
+            pageId: "def_incoterms"
+        },
+        "Abstimmkonto": {
+            text: "Ein Sachkonto im Hauptbuch, auf dem die Verkehrszahlen der Nebenbuchkonten (Debitoren/Kreditoren) parallel fortgeschrieben werden. Es kann nicht direkt bebucht werden.",
+            pageId: "def_abstimmkonto"
+        },
+        "Dispositionsmerkmal": {
+            text: "Steuert, wie das Material disponiert wird (z.B. PD = Plangesteuert, VB = Manuelle Bestellpunktdisposition, ND = Keine Disposition).",
+            pageId: "def_dispositionsmerkmal"
+        },
+        "Verkaufsorganisation": {
+            text: "Eine organisatorische Einheit, die für den Vertrieb von Materialien und Leistungen verantwortlich ist. Jede Verkaufsorganisation hat eine eigenständige Preispolitik.",
+            pageId: "def_verkaufsorganisation"
+        },
+        "Vertriebsweg": {
+            text: "Der Vertriebsweg beschreibt den Weg, auf dem Materialien oder Dienstleistungen zum Kunden gelangen (z.B. Großhandel, Einzelhandel, Direktvertrieb).",
+            pageId: "def_vertriebsweg"
+        },
+        "Sparte": {
+            text: "Die Sparte ist eine Organisationseinheit, mit der Materialien und Dienstleistungen gruppiert werden können (z.B. Bikes, Zubehör).",
+            pageId: "def_sparte"
+        },
+        "Vertriebsbereich": {
+            text: "Der Vertriebsbereich ist als Kombination aus Verkaufsorganisation, Vertriebsweg und Sparte definiert.",
+            pageId: "def_vertriebsbereich"
+        }
+    };
+
+    // Mapping: help-Begriff → interne Seiten-ID
+    const helpToPageId = {
+        "Mandant":               "def_mandant",
+        "Buchungskreis":         "def_buchungskreis",
+        "Einkaufsorganisation":  "def_einkaufsorganisation",
+        "Werk":                  "def_werk",
+        "Lagerort":              "def_lagerort",
+        "Debitor":               "def_debitor",
+        "Kreditor":              "def_kreditor",
+        "Einkaufsinfosatz":      "def_einkaufsinfosatz",
+        "Orderbuch":             "def_orderbuch",
+        "Konditionen":           "def_konditionen",
+        "Kontrakt":              "def_kontrakt",
+        "Materialart":           "def_materialart",
+        "Incoterms":             "def_incoterms",
+        "Abstimmkonto":          "def_abstimmkonto",
+        "Dispositionsmerkmal":   "def_dispositionsmerkmal",
+        "Gleitender Durchschnittspreis": "def_materialart"
+    };
+
+    let currentPopoverTerm = '';
+
+    // ---------------------------------------------------------
+    // 2. MENÜSTRUKTUR
+    // ---------------------------------------------------------
+    const menuStructure = [
+        // ── NEU: EINLEITUNG ──────────────────────────────────
+        {
+            title: "Einleitung",
+            items: [
+                { type: "header", label: "Das Unternehmen" },
+                { type: "link", label: "Global Bike Deutschland GmbH", id: "intro_globalbike",   help: "Mandant" },
+                { type: "link", label: "SAP-Organisationsstruktur",    id: "intro_orga",         help: "Buchungskreis" },
+
+                { type: "header", label: "Stammdaten – Überblick" },
+                { type: "link", label: "Was sind Stammdaten?",         id: "intro_stammdaten",   help: "Materialart" },
+                { type: "link", label: "Debitorenstammdaten",          id: "intro_debitoren",    help: "Debitor" },
+                { type: "link", label: "Kreditorenstammdaten",         id: "intro_kreditoren",   help: "Kreditor" },
+                { type: "link", label: "Materialstammdaten",           id: "intro_materialien",  help: "Materialart" },
+
+                { type: "header", label: "SAP Navigation" },
+                { type: "link", label: "Navigation & Tipps",           id: "intro_navigation",   help: "Mandant" }
+            ]
+        },
+
+        // ── BESTAND: EINKAUF ─────────────────────────────────
+        {
+            title: "Einkauf",
+            items: [
+                { type: "header", label: "Kreditorenstamm" },
+                { type: "link", label: "Kreditor anlegen",          id: "kreditor_anlegen",      help: "Kreditor" },
+                { type: "link", label: "Kreditor ändern",           id: "kreditor_aendern",      help: "Kreditor" },
+                { type: "link", label: "Kreditor anzeigen",         id: "kreditor_anzeigen",     help: "Kreditor" },
+                { type: "link", label: "Lieferantenverzeichnis",    id: "lieferantenverzeichnis",help: "Kreditor" },
+
+                { type: "header", label: "Einkaufsinfosatz" },
+                { type: "link", label: "Infosatz anlegen",          id: "infosatz_anlegen",      help: "Einkaufsinfosatz" },
+                { type: "link", label: "Infosatz ändern",           id: "infosatz_aendern",      help: "Einkaufsinfosatz" },
+                { type: "link", label: "Infosatz anzeigen",         id: "infosatz_anzeigen",     help: "Einkaufsinfosatz" },
+                { type: "link", label: "Infosätze zum Lieferant",   id: "infosatz_lieferant",    help: "Einkaufsinfosatz" },
+                { type: "link", label: "Infosätze zum Material",    id: "infosatz_material",     help: "Einkaufsinfosatz" },
+
+                { type: "header", label: "Orderbuch" },
+                { type: "link", label: "Orderbuch pflegen",         id: "orderbuch_pflegen",     help: "Orderbuch" },
+                { type: "link", label: "Orderbuch anzeigen",        id: "orderbuch_anzeigen",    help: "Orderbuch" }
+            ]
+        },
+
+        // ── BESTAND: VERKAUF ─────────────────────────────────
+        {
+            title: "Verkauf",
+            items: [
+                { type: "header", label: "Debitorenstamm" },
+                { type: "link", label: "Debitor anlegen",               id: "debitor_anlegen",    help: "Debitor" },
+                { type: "link", label: "Debitor ändern",                id: "debitor_aendern",    help: "Debitor" },
+                { type: "link", label: "Debitor anzeigen",              id: "debitor_anzeigen",   help: "Debitor" },
+
+                { type: "header", label: "Konditionen" },
+                { type: "link", label: "Konditionen anlegen",           id: "kondition_anlegen",  help: "Konditionen" },
+                { type: "link", label: "Konditionen ändern",            id: "kondition_aendern",  help: "Konditionen" },
+                { type: "link", label: "Konditionen anzeigen",          id: "kondition_anzeigen", help: "Konditionen" },
+
+                { type: "header", label: "Kontrakte" },
+                { type: "link", label: "Verkaufskontrakte anlegen",     id: "kontrakt_anlegen",   help: "Kontrakt" },
+                { type: "link", label: "Verkaufskontrakte ändern",      id: "kontrakt_aendern",   help: "Kontrakt" },
+                { type: "link", label: "Verkaufskontrakte anzeigen",    id: "kontrakt_anzeigen",  help: "Kontrakt" }
+            ]
+        },
+
+        // ── BESTAND: MATERIAL ────────────────────────────────
+        {
+            title: "Material",
+            items: [
+                { type: "header", label: "Materialstamm" },
+                { type: "link", label: "Material anlegen",          id: "material_anlegen",      help: "Materialart" },
+                { type: "link", label: "Material ändern",           id: "material_aendern",      help: "Materialart" },
+                { type: "link", label: "Material anzeigen",         id: "material_anzeigen",     help: "Materialart" },
+                { type: "link", label: "Materialverzeichnis",       id: "materialverzeichnis",   help: "Materialart" },
+                { type: "link", label: "Materialart ändern",        id: "materialart_aendern",   help: "Materialart" },
+                { type: "link", label: "Bewertungspreis ändern",    id: "mr21",                  help: "Gleitender Durchschnittspreis" },
+
+                { type: "header", label: "Materialverfügbarkeit" },
+                { type: "link", label: "Bestandsübersicht",         id: "bestandsuebersicht",    help: "Lagerort" },
+                { type: "link", label: "Bedarfs-/Bestandsliste",    id: "md04",                  help: "Dispositionsmerkmal" }
+            ]
+        },
+
+        // ── NEU: DEFINITIONEN ────────────────────────────────
+        {
+            title: "Definitionen",
+            items: [
+                { type: "header", label: "Organisationsstruktur" },
+                { type: "link", label: "Mandant",               id: "def_mandant",              help: "Mandant" },
+                { type: "link", label: "Buchungskreis",         id: "def_buchungskreis",        help: "Buchungskreis" },
+                { type: "link", label: "Werk",                  id: "def_werk",                 help: "Werk" },
+                { type: "link", label: "Lagerort",              id: "def_lagerort",             help: "Lagerort" },
+                { type: "link", label: "Einkaufsorganisation",  id: "def_einkaufsorganisation", help: "Einkaufsorganisation" },
+                { type: "link", label: "Verkaufsorganisation",  id: "def_verkaufsorganisation", help: "Verkaufsorganisation" },
+                { type: "link", label: "Vertriebsweg",          id: "def_vertriebsweg",         help: "Vertriebsweg" },
+                { type: "link", label: "Sparte",                id: "def_sparte",               help: "Sparte" },
+                { type: "link", label: "Vertriebsbereich",      id: "def_vertriebsbereich",     help: "Vertriebsbereich" },
+
+                { type: "header", label: "Geschäftspartner" },
+                { type: "link", label: "Debitor (Kunde)",       id: "def_debitor",              help: "Debitor" },
+                { type: "link", label: "Kreditor (Lieferant)",  id: "def_kreditor",             help: "Kreditor" },
+                { type: "link", label: "Abstimmkonto",          id: "def_abstimmkonto",         help: "Abstimmkonto" },
+
+                { type: "header", label: "Einkauf" },
+                { type: "link", label: "Einkaufsinfosatz",      id: "def_einkaufsinfosatz",     help: "Einkaufsinfosatz" },
+                { type: "link", label: "Orderbuch",             id: "def_orderbuch",            help: "Orderbuch" },
+
+                { type: "header", label: "Verkauf & Material" },
+                { type: "link", label: "Konditionen",           id: "def_konditionen",          help: "Konditionen" },
+                { type: "link", label: "Kontrakt",              id: "def_kontrakt",             help: "Kontrakt" },
+                { type: "link", label: "Materialart",           id: "def_materialart",          help: "Materialart" },
+                { type: "link", label: "Incoterms",             id: "def_incoterms",            help: "Incoterms" },
+                { type: "link", label: "Dispositionsmerkmal",   id: "def_dispositionsmerkmal",  help: "Dispositionsmerkmal" }
+            ]
+        }
+    ];
+
+    // ---------------------------------------------------------
+    // 3. INHALT
+    // ---------------------------------------------------------
+    const content = {
+
+        // ── STARTSEITE ───────────────────────────────────────
+        "welcome": `
+            <h1>Willkommen im SAP Stammdaten Guide</h1>
+            <p>Dieser interaktive Guide begleitet Sie durch die wichtigsten SAP-Transaktionen der Global Bike Deutschland GmbH.</p>
+            <div class="info-box"><p>📘 <strong>Neu bei SAP?</strong> Starten Sie am besten mit dem Abschnitt <strong>„Einleitung"</strong> im Menü links – dort erhalten Sie einen strukturierten Einstieg in das System und die verwendeten Begriffe.</p></div>
+            <p>Wählen Sie im Menü links eine Kategorie aus, um loszulegen.</p>
+            <div class="img-placeholder">Platzhalter für Startbild</div>
+        `,
+
+        // ══════════════════════════════════════════════════════
+        // EINLEITUNG
+        // ══════════════════════════════════════════════════════
+
+        "intro_globalbike": `
+            <h1>Global Bike Deutschland GmbH</h1>
+            <div class="info-box"><p>Dieses Kapitel stellt Ihnen das Modellunternehmen vor, mit dem Sie im SAP-System arbeiten werden.</p></div>
+
+            <h2>Das Unternehmen</h2>
+            <p>Die <strong>Global Bike Deutschland GmbH (GB)</strong> stellt hochwertige Fahrräder und GPS-Radcomputer her und vertreibt diese. Um den Kunden ein komplettes Sortiment anbieten zu können, vertreibt die GB auch Fahrradzubehör, das als Handelsware zugekauft wird.</p>
+            <ul>
+                <li><strong>Hauptsitz &amp; Produktion:</strong> Heidelberg (HD)</li>
+                <li><strong>Niederlassung &amp; Distribution:</strong> Hamburg (HH)</li>
+            </ul>
+
+            <h2>Lagerorganisation</h2>
+            <p>An beiden Standorten gibt es jeweils zwei Lagerorte:</p>
+            <table class="org-table">
+                <tr><th>Standort</th><th>Lagerort</th><th>Inhalt</th></tr>
+                <tr><td>Heidelberg (HD)</td><td>Zentrallager (ZL)</td><td>Alle normalen Materialien</td></tr>
+                <tr><td>Heidelberg (HD)</td><td>Gefahrstoffe (GF)</td><td>Lacke und gefährliche Stoffe</td></tr>
+                <tr><td>Hamburg (HH)</td><td>Zentrallager (ZL)</td><td>Alle normalen Materialien</td></tr>
+                <tr><td>Hamburg (HH)</td><td>Gefahrstoffe (GF)</td><td>Lacke und gefährliche Stoffe</td></tr>
+            </table>
+
+            <h2>Vertriebsorganisation</h2>
+            <p>Der Vertrieb erfolgt über zwei <strong>Verkaufsorganisationen</strong>, die unterschiedliche Märkte bedienen:</p>
+            <table class="org-table">
+                <tr><th>Verkaufsorganisation</th><th>Vertriebswege</th></tr>
+                <tr><td><strong>Deutschland Süd (DS)</strong></td><td>Großhandel (GH), Einzelhandel (EH)</td></tr>
+                <tr><td><strong>Deutschland Nord (DN)</strong></td><td>Großhandel (GH), Direktvertrieb (DV)</td></tr>
+            </table>
+            <p>Das gesamte Warenangebot ist in zwei <strong>Sparten</strong> unterteilt:</p>
+            <ul>
+                <li><strong>Bikes (BI):</strong> Selbst gefertigte Fahrräder und Tretroller</li>
+                <li><strong>Zubehör (ZU):</strong> Alle zugekauften Handelswaren</li>
+            </ul>
+            <div class="tip-box"><p>💡 <strong>Tipp:</strong> Den Begriff <strong>Vertriebsbereich</strong> werden Sie häufig begegnen. Er ist immer eine Kombination aus Verkaufsorganisation + Vertriebsweg + Sparte, z.B. „DS + GH + BI".</p></div>
+        `,
+
+        "intro_orga": `
+            <h1>SAP-Organisationsstruktur</h1>
+            <div class="info-box"><p>SAP bildet Unternehmen über eine hierarchische Organisationsstruktur ab. Verstehen Sie diese Ebenen, bevor Sie mit Stammdaten arbeiten.</p></div>
+
+            <h2>Die Hierarchieebenen im Überblick</h2>
+            <table class="org-table">
+                <tr><th>Begriff</th><th>Bedeutung (kurz)</th><th>Bei Global Bike</th></tr>
+                <tr><td><strong>Mandant</strong></td><td>Höchste Ebene im SAP-System. Rechtlich und datentechnisch abgeschlossen.</td><td>Das gesamte SAP-System der Schule</td></tr>
+                <tr><td><strong>Buchungskreis</strong></td><td>Rechtlich selbständige Firma mit eigener Buchhaltung.</td><td>Global Bike Deutschland GmbH (DE@@)</td></tr>
+                <tr><td><strong>Werk</strong></td><td>Produktions- oder Lagerstandort.</td><td>Heidelberg (HD@@), Hamburg (HH@@)</td></tr>
+                <tr><td><strong>Lagerort</strong></td><td>Teilbereich eines Werks für die Bestandsführung.</td><td>Zentrallager (ZL), Gefahrstoffe (GF)</td></tr>
+                <tr><td><strong>Einkaufsorganisation</strong></td><td>Zuständig für Beschaffung und Lieferantenverträge.</td><td>Identisch mit dem Buchungskreis (DE@@)</td></tr>
+                <tr><td><strong>Verkaufsorganisation</strong></td><td>Zuständig für Vertrieb, eigenständige Preispolitik.</td><td>Deutschland Süd (DS@@), Deutschland Nord (DN@@)</td></tr>
+                <tr><td><strong>Vertriebsweg</strong></td><td>Weg, über den Ware zum Kunden gelangt.</td><td>Großhandel (GH), Einzelhandel (EH), Direktvertrieb (DV)</td></tr>
+                <tr><td><strong>Sparte</strong></td><td>Produktgruppen-Einteilung.</td><td>Bikes (BI), Zubehör (ZU)</td></tr>
+            </table>
+
+            <div class="warn-box"><p>⚠️ <strong>Wichtig:</strong> Ihre persönliche SAP-Kennnummer <strong>###</strong> und Ihre Organisationsnummer <strong>@@</strong> erhalten Sie von Ihrer Lehrkraft. Alle für Sie angelegten Stammdaten enden mit ###.</p></div>
+
+            <h2>Ihre Zugangsdaten</h2>
+            <ul>
+                <li><strong>Mandant:</strong> (von der Lehrkraft)</li>
+                <li><strong>Benutzer:</strong> GB-### (Ihre Kennnummer)</li>
+                <li><strong>Passwort:</strong> Mindestens 8 Zeichen mit Groß-/Kleinbuchstaben, Zahlen und Sonderzeichen</li>
+            </ul>
+        `,
+
+        "intro_stammdaten": `
+            <h1>Was sind Stammdaten?</h1>
+            <div class="info-box"><p>Stammdaten sind dauerhafte Basisdaten eines Unternehmens, die sich selten ändern und von vielen Geschäftsprozessen gemeinsam genutzt werden.</p></div>
+
+            <h2>Stammdaten vs. Bewegungsdaten</h2>
+            <p>Im SAP-System unterscheidet man zwei grundlegende Datenkategorien:</p>
+            <table class="org-table">
+                <tr><th>Datenkategorie</th><th>Beschreibung</th><th>Beispiele</th></tr>
+                <tr><td><strong>Stammdaten</strong></td><td>Langfristige Grunddaten, die viele Vorgänge begleiten</td><td>Kundendaten, Lieferantendaten, Materialien</td></tr>
+                <tr><td><strong>Bewegungsdaten</strong></td><td>Transaktionsdaten, die bei Geschäftsvorfällen entstehen</td><td>Bestellungen, Rechnungen, Lieferscheine</td></tr>
+            </table>
+
+            <h2>Die drei wichtigsten Stammdaten-Typen</h2>
+            <p>In diesem Guide arbeiten Sie mit drei zentralen Stammdaten-Typen:</p>
+            <ul>
+                <li>📋 <strong>Debitorenstammdaten</strong> – Daten über Kunden (Käufer). Verwaltet im Bereich <em>Verkauf</em>.</li>
+                <li>📋 <strong>Kreditorenstammdaten</strong> – Daten über Lieferanten (Verkäufer). Verwaltet im Bereich <em>Einkauf</em>.</li>
+                <li>📋 <strong>Materialstammdaten</strong> – Daten über alle Waren und Produkte. Verwaltet im Bereich <em>Material</em>.</li>
+            </ul>
+
+            <h2>Warum sind Stammdaten so wichtig?</h2>
+            <p>Stammdaten sind die Grundlage für alle Geschäftsprozesse. Ohne korrekte Stammdaten können keine Bestellungen ausgelöst, keine Rechnungen erstellt und keine Lieferungen durchgeführt werden. Fehlerhafte Stammdaten führen direkt zu fehlerhaften Buchungen.</p>
+            <div class="tip-box"><p>💡 <strong>Praxishinweis:</strong> In der Ausbildung lernen Sie, Stammdaten zu <em>recherchieren</em> (anzeigen), zu <em>pflegen</em> (ändern) und zu <em>anlegen</em>. Diese drei Grundoperationen begegnen Ihnen bei allen Stammdaten-Typen.</p></div>
+        `,
+
+        "intro_debitoren": `
+            <h1>Debitorenstammdaten – Einführung</h1>
+            <div class="info-box"><p>Ein <strong>Debitor</strong> ist im SAP-Sprachgebrauch ein Kunde – also ein Unternehmen oder eine Person, an die die Global Bike Deutschland GmbH Waren verkauft.</p></div>
+
+            <h2>Die drei Datensichten</h2>
+            <p>Debitorenstammdaten werden in drei Sichten (Bereichen) gepflegt, die unterschiedliche Abteilungen betreffen:</p>
+            <table class="org-table">
+                <tr><th>Sicht</th><th>Enthält</th><th>Beispiel</th></tr>
+                <tr><td><strong>Allgemeine Daten</strong></td><td>Mandantenweite Daten – für das ganze Unternehmen gültig</td><td>Adresse, Bankverbindung, Steuernummer</td></tr>
+                <tr><td><strong>Buchungskreis</strong></td><td>Buchhaltungsrelevante Daten</td><td>Abstimmkonto, Ansprechpartner, Zahlungshistorie</td></tr>
+                <tr><td><strong>Vertrieb</strong></td><td>Vertriebsbereichsbezogene Daten</td><td>Auslieferungswerk, Zahlungsbedingungen, Incoterms</td></tr>
+            </table>
+
+            <h2>Wichtige Transaktionen</h2>
+            <ul>
+                <li><strong>Debitor anzeigen</strong> – Stammdaten lesen, ohne etwas zu ändern (schreibgeschützt)</li>
+                <li><strong>Debitor ändern (BP)</strong> – Stammdaten bearbeiten und speichern</li>
+                <li><strong>Debitor anlegen (BP / XD01)</strong> – Neuen Kunden im System erfassen</li>
+            </ul>
+
+            <h2>Kunden der Global Bike</h2>
+            <p>In Ihren Übungen arbeiten Sie u.a. mit folgenden Kunden:</p>
+            <ul>
+                <li><strong>Ostseerad e.K.</strong> – Einzelhändler (Anklam)</li>
+                <li><strong>NeckaRad GmbH</strong> – Händler (Heidelberg)</li>
+                <li><strong>Capital Bikes OHG</strong> – Händler (Berlin)</li>
+                <li><strong>Simon Hugendubel</strong> – Privatkunde</li>
+            </ul>
+            <div class="tip-box"><p>💡 <strong>Suchtipp:</strong> Da Kundennummern oft unbekannt sind, suchen Sie über den Kundennamen mit dem Platzhalter <code>*</code> (z.B. <code>*Ostseerad*</code>). Ihre persönlichen Kunden enden immer mit <strong>###</strong>.</p></div>
+        `,
+
+        "intro_kreditoren": `
+            <h1>Kreditorenstammdaten – Einführung</h1>
+            <div class="info-box"><p>Ein <strong>Kreditor</strong> ist im SAP-Sprachgebrauch ein Lieferant – also ein Unternehmen, von dem die Global Bike Deutschland GmbH Waren oder Dienstleistungen einkauft.</p></div>
+
+            <h2>Die drei Datensichten</h2>
+            <table class="org-table">
+                <tr><th>Sicht</th><th>Enthält</th><th>Beispiel</th></tr>
+                <tr><td><strong>Allgemeine Daten</strong></td><td>Mandantenweite Daten</td><td>Adresse, Bankverbindung, Steuernummer, Kontaktdaten</td></tr>
+                <tr><td><strong>Buchungskreis</strong></td><td>Buchhaltungsrelevante Daten</td><td>Abstimmkonto, Ansprechpartner</td></tr>
+                <tr><td><strong>Einkauf</strong></td><td>Einkaufsbezogene Daten</td><td>Zahlungsbedingungen, Lieferbedingungen, Währung</td></tr>
+            </table>
+
+            <h2>Wichtige Transaktionen</h2>
+            <ul>
+                <li><strong>Kreditor anzeigen (XK03)</strong> – Lieferantendaten lesen</li>
+                <li><strong>Kreditor ändern (XK02)</strong> – Lieferantendaten bearbeiten</li>
+                <li><strong>Kreditor anlegen (BP / XK01)</strong> – Neuen Lieferanten erfassen</li>
+                <li><strong>Lieferantenverzeichnis (MKVZ)</strong> – Liste aller Lieferanten</li>
+            </ul>
+
+            <h2>Lieferanten der Global Bike</h2>
+            <ul>
+                <li><strong>Centauro Impex AG</strong> – Lieferant für Geländehelme</li>
+                <li><strong>MeBaTex GmbH &amp; Co KG</strong> – Weiterer Lieferant</li>
+                <li><strong>Soda &amp; Anilin AG</strong> – Chemiebedarf</li>
+                <li><strong>Esslinger Maschinenfabrik AG</strong> – Maschinenlieferant</li>
+            </ul>
+            <div class="tip-box"><p>💡 <strong>Hinweis:</strong> Die Recherche in Kreditorenstammdaten funktioniert fast identisch wie bei Debitorenstammdaten. Nutzen Sie das Suchsymbol und suchen Sie mit <code>*###</code> nach Ihren zugeordneten Lieferanten.</p></div>
+        `,
+
+        "intro_materialien": `
+            <h1>Materialstammdaten – Einführung</h1>
+            <div class="info-box"><p>Im <strong>Materialstammsatz</strong> werden alle Informationen zu einem Material gespeichert, das ein Unternehmen beschafft, lagert, fertigt oder verkauft.</p></div>
+
+            <h2>Warum so viele Sichten?</h2>
+            <p>Ein Material wird von vielen Abteilungen gleichzeitig genutzt – Einkauf, Lager, Buchhaltung, Vertrieb. Jede Abteilung braucht andere Informationen. Deshalb sind Materialstammdaten in <strong>Sichten</strong> gegliedert:</p>
+            <table class="org-table">
+                <tr><th>Sicht</th><th>Enthält</th></tr>
+                <tr><td><strong>Grunddaten</strong></td><td>Allgemeine Daten (mandantenweit), z.B. Bezeichnung, Maßeinheit, Warengruppe</td></tr>
+                <tr><td><strong>Vertrieb: VerkaufsorgDaten</strong></td><td>Listenverkaufspreise, Auslieferungswerk, Steuerklassifikation</td></tr>
+                <tr><td><strong>Einkauf</strong></td><td>Einkäufergruppe, Bearbeitungszeit</td></tr>
+                <tr><td><strong>Disposition 1 &amp; 2</strong></td><td>Dispositionsmerkmal, Planlieferzeit, Meldebestand</td></tr>
+                <tr><td><strong>Buchhaltung</strong></td><td>Bewertungspreis (Standardpreis oder gleitender Durchschnittspreis)</td></tr>
+                <tr><td><strong>Werksbestand</strong></td><td>Aktueller Lagerbestand im Werk</td></tr>
+                <tr><td><strong>Lagerortbestand</strong></td><td>Bestand aufgeteilt nach Lagerorten</td></tr>
+            </table>
+
+            <h2>Materialien der Global Bike</h2>
+            <ul>
+                <li><strong>Geländehelm</strong> – Handelsware (Zubehör)</li>
+                <li><strong>Wasserflasche</strong> – Handelsware (Zubehör)</li>
+                <li><strong>Citybike (schwarz)</strong> – Fertigerzeugnis (Bikes)</li>
+                <li><strong>Zylinderschraube ISO4762-M5X20-8.8</strong> – Fremdbezugsteil</li>
+            </ul>
+            <div class="tip-box"><p>💡 <strong>Suchtipp:</strong> Materialnummern sind unbekannt – suchen Sie im Feld „Materialkurztext" mit <code>*Geländehelm*</code> und im Feld „Material" mit <code>*###</code>.</p></div>
+        `,
+
+        "intro_navigation": `
+            <h1>Navigation &amp; Tipps</h1>
+            <div class="info-box"><p>Diese Seite fasst die wichtigsten Navigationsmethoden und Tastenkombinationen im SAP-System zusammen.</p></div>
+
+            <h2>Grundlegende Navigation</h2>
+            <ul>
+                <li><strong>Favoritenmenü:</strong> Ihre wichtigsten Transaktionen sind dort gespeichert. Klicken Sie direkt auf den Namen der Transaktion.</li>
+                <li><strong>Zurück-Button (←):</strong> Gelangt Sie zur vorherigen Maske zurück.</li>
+                <li><strong>Sichern:</strong> Immer per Klick auf den Sichern-Button in der Fußzeile oder über das Disketten-Symbol.</li>
+            </ul>
+
+            <h2>Suche und Werthilfe</h2>
+            <ul>
+                <li><strong>Platzhalter *:</strong> Verwenden Sie <code>*</code> für Teilsuchen, z.B. <code>*Ostseerad*</code> oder <code>*###</code>.</li>
+                <li><strong>Werthilfesymbol (📋):</strong> Klicken Sie auf das Symbol neben einem Eingabefeld, um alle gültigen Werte anzuzeigen.</li>
+                <li><strong>F4-Taste:</strong> Öffnet ebenfalls die Werthilfe für das aktive Eingabefeld.</li>
+                <li><strong>F1-Taste:</strong> Öffnet die SAP-Hilfe mit einer Erklärung zum aktiven Feld.</li>
+            </ul>
+
+            <h2>Mehrere Fenster</h2>
+            <p>Sie können mehrere GUI-Fenster gleichzeitig öffnen, um parallel in verschiedenen Stammdaten zu arbeiten:</p>
+            <ul>
+                <li>Menüleiste → <strong>System</strong> → <strong>Neues GUI-Fenster</strong> (oder Strg+N)</li>
+            </ul>
+
+            <h2>Anzeigen vs. Ändern</h2>
+            <table class="org-table">
+                <tr><th>Modus</th><th>Erkennungszeichen</th></tr>
+                <tr><td><strong>Anzeigen (lesend)</strong></td><td>Eingabefelder sind grau hinterlegt – keine Änderungen möglich</td></tr>
+                <tr><td><strong>Ändern (schreibend)</strong></td><td>Eingabefelder sind weiß hinterlegt – Änderungen möglich</td></tr>
+            </table>
+            <div class="warn-box"><p>⚠️ <strong>Wichtig:</strong> Vergessen Sie nie, Ihre Änderungen zu <strong>sichern</strong>! Nicht gespeicherte Daten gehen beim Verlassen der Transaktion verloren.</p></div>
+
+            <h2>Locator deaktivieren</h2>
+            <p>Der Locator (linkes Suchfenster) liefert oft ungenaue Ergebnisse. Klicken Sie auf <strong>„Locator ein/aus"</strong>, um ihn zu deaktivieren und stattdessen die präzisere Suche über <strong>„GP öffnen"</strong> zu nutzen.</p>
+        `,
+
+        // ══════════════════════════════════════════════════════
+        // EINKAUF (bestehend)
+        // ══════════════════════════════════════════════════════
+
+        "kreditor_anlegen": `
+            <h2>Kreditor anlegen <span class="transaction-code">BP / XK01</span></h2>
+            <p>Das Anlegen eines Kreditors (Lieferanten) erfolgt zentral über den Business Partner.</p>
+            <h3>Schritt-für-Schritt</h3>
+            <ol>
+                <li>Starten Sie die Transaktion <strong>Kreditor anlegen</strong>.</li>
+                <li>Wählen Sie im Pop-up den Typ <strong>Organisation</strong>.</li>
+                <li>Wählen Sie die Gruppierung <strong>Kreditor interne Nummernvergabe</strong>.</li>
+                <li><strong>Register Anschrift:</strong> Tragen Sie Name, Suchbegriff (Ihre Kennung), Straße, PLZ, Ort und Land ein.</li>
+                <li><strong>Register Steuernummern:</strong> Tragen Sie die USt-IdNr ein (Typ DE0).</li>
+                <li>Wechseln Sie in die Rolle <strong>Kreditor (Finanzbuchhaltung)</strong> und pflegen Sie das Abstimmkonto.</li>
+                <li>Wechseln Sie in die Rolle <strong>Kreditor (Einkauf)</strong> und pflegen Sie die Einkaufsdaten.</li>
+                <li>Sichern Sie den Datensatz.</li>
+            </ol>
+            <div class="img-placeholder">Bild: Einstiegsmaske BP</div>
+        `,
+        "kreditor_aendern": `
+            <h2>Kreditor ändern <span class="transaction-code">XK02</span></h2>
+            <p>Ändern von Stammdaten eines bestehenden Lieferanten.</p>
+            <ol>
+                <li>Transaktion starten.</li>
+                <li>Kreditorennummer eingeben.</li>
+                <li>Zu ändernde Sichten auswählen (z.B. Anschrift).</li>
+                <li>Daten korrigieren und speichern.</li>
+            </ol>
+            <div class="img-placeholder">Bild: Kreditor ändern Einstieg</div>
+        `,
+        "kreditor_anzeigen": `
+            <h2>Kreditor anzeigen <span class="transaction-code">XK03</span></h2>
+            <p>Einsicht in die Stammdaten ohne Änderungsmöglichkeit.</p>
+            <div class="img-placeholder">Bild: Anzeige Kreditor</div>
+        `,
+        "lieferantenverzeichnis": `
+            <h2>Lieferantenverzeichnis <span class="transaction-code">MKVZ</span></h2>
+            <p>Erstellt eine Liste aller Lieferanten zu einer Einkaufsorganisation.</p>
+            <ol>
+                <li>Einkaufsorganisation eingeben.</li>
+                <li>Ausführen (F8).</li>
+            </ol>
+            <div class="img-placeholder">Bild: Liste MKVZ</div>
+        `,
+        "infosatz_anlegen": `
+            <h2>Infosatz anlegen <span class="transaction-code">ME11</span></h2>
+            <p>Verknüpft Material und Lieferant mit Preisen.</p>
+            <ol>
+                <li>Lieferant und Material eingeben.</li>
+                <li>Einkaufsorganisation und Werk wählen.</li>
+                <li>Enter drücken.</li>
+                <li>Planlieferzeit, Einkäufergruppe, Normalmenge und Nettopreis pflegen.</li>
+                <li>Sichern.</li>
+            </ol>
+            <div class="img-placeholder">Bild: Infosatz Einkaufsdaten</div>
+        `,
+        "infosatz_aendern": `
+            <h2>Infosatz ändern <span class="transaction-code">ME12</span></h2>
+            <p>Inhalt folgt...</p>
+            <div class="img-placeholder">Platzhalter</div>
+        `,
+        "infosatz_anzeigen": `
+            <h2>Infosatz anzeigen <span class="transaction-code">ME13</span></h2>
+            <p>Inhalt folgt...</p>
+            <div class="img-placeholder">Platzhalter</div>
+        `,
+        "infosatz_lieferant": `
+            <h2>Infosätze zum Lieferant <span class="transaction-code">ME1M</span></h2>
+            <p>Inhalt folgt...</p>
+            <div class="img-placeholder">Platzhalter</div>
+        `,
+        "infosatz_material": `
+            <h2>Infosätze zum Material</h2>
+            <p>Inhalt folgt...</p>
+            <div class="img-placeholder">Platzhalter</div>
+        `,
+        "orderbuch_pflegen": `
+            <h2>Orderbuch pflegen <span class="transaction-code">ME01</span></h2>
+            <p>Legt fest, welcher Lieferant wann liefern darf.</p>
+            <ol>
+                <li>Material und Werk eingeben.</li>
+                <li>Gültigkeitszeitraum und Lieferant eintragen.</li>
+                <li>Einkaufsorganisation eintragen.</li>
+                <li>Sichern.</li>
+            </ol>
+            <div class="img-placeholder">Bild: Orderbuch Übersicht</div>
+        `,
+        "orderbuch_anzeigen": `
+            <h2>Orderbuch anzeigen <span class="transaction-code">ME03</span></h2>
+            <p>Inhalt folgt...</p>
+            <div class="img-placeholder">Platzhalter</div>
+        `,
+
+        // ══════════════════════════════════════════════════════
+        // VERKAUF (bestehend)
+        // ══════════════════════════════════════════════════════
+
+        "debitor_anlegen": `
+            <h2>Debitorenstammdaten anlegen <span class="transaction-code">BP / XD01</span></h2>
+            <h3>Schritt 1: Transaktion aufrufen und Grundtyp wählen</h3>
+            <ul>
+                <li>Suchen Sie in Ihrem Favoritenmenü die Transaktion <strong>„Debitor anlegen"</strong>.</li>
+                <li>Wählen Sie im Pop-up „Anlegen Geschäftspartner" den Typ <strong>„Organisation"</strong> aus und bestätigen Sie mit dem grünen Haken.</li>
+                <li>Wählen Sie im Feld „Gruppierung" den Eintrag <strong>„Debitor interne Nummernvergabe"</strong> aus. Lassen Sie das Feld „Geschäftspartner" leer.</li>
+            </ul>
+            <h3>Schritt 2: Allgemeine Daten (Sicht „Anschrift")</h3>
+            <ul>
+                <li>Geben Sie im Register „Anschrift" die Stammdaten des Kunden ein: Anrede/Name, Suchbegriff (###), Anschrift, Kommunikation.</li>
+                <li>Wechseln Sie in das Register „Steuernummern".</li>
+            </ul>
+            <div class="img-placeholder">Bild: Adresse und Suchbegriff eingeben</div>
+            <h3>Schritt 3: Bankverbindung hinterlegen</h3>
+            <ul>
+                <li>Register <strong>„Bankverbindungen"</strong>: Land, Bankschlüssel und Kontonummer eingeben.</li>
+                <li>Klicken Sie auf <strong>„IBAN pflegen"</strong> und bestätigen Sie die generierte IBAN.</li>
+            </ul>
+            <h3>Schritt 4: Buchungskreisdaten pflegen</h3>
+            <ul>
+                <li>Schaltfläche <strong>„Buchungskreis"</strong> → Buchungskreis-Schlüssel eingeben (z.B. DE@@).</li>
+                <li>Im Feld <strong>„Abstimmkonto"</strong> das entsprechende Konto per F4-Hilfe zuordnen.</li>
+            </ul>
+            <h3>Schritt 5: Vertriebsbereichsdaten erfassen</h3>
+            <ul>
+                <li>Schaltfläche <strong>„Vertrieb"</strong> → Vertriebsbereich eingeben.</li>
+                <li>Register <strong>„Versand"</strong>: Auslieferungswerk, Lieferpriorität, Versandbedingungen.</li>
+                <li>Register <strong>„Faktura"</strong>: Liefer- und Zahlungsbedingungen (Incoterms), Steuerklassifikation.</li>
+            </ul>
+            <div class="img-placeholder">Bild: Vertriebs- und Fakturadaten</div>
+            <h3>Schritt 6: Speichern und Nummer notieren</h3>
+            <ul>
+                <li>Klicken Sie auf das <strong>Speichern-Symbol</strong>. Das System vergibt eine eindeutige Debitorennummer – notieren Sie diese!</li>
+            </ul>
+        `,
+        "debitor_aendern": `
+            <h2>Debitorenstammdaten ändern/erweitern <span class="transaction-code">BP</span></h2>
+            <p>Dieser Prozess wird angewendet, wenn ein bereits existierender Geschäftspartner für ein neues Organisationsdatum freigeschaltet werden soll.</p>
+            <h3>Schritt 1: Transaktion zum Ändern aufrufen</h3>
+            <ul>
+                <li>Transaktion <strong>Debitor ändern (BP)</strong> wählen → Debitorennummer eingeben → Enter.</li>
+                <li><em>Alternative:</em> In der Anzeige auf <strong>„GP öffnen"</strong> klicken.</li>
+            </ul>
+            <h3>Schritt 2: In die Vertriebssicht wechseln</h3>
+            <ul>
+                <li>Schaltfläche <strong>„Vertrieb"</strong> im oberen Menüband klicken.</li>
+            </ul>
+            <div class="img-placeholder">Bild: Button Vertrieb im BP-Menü</div>
+            <h3>Schritt 3: Neuen Vertriebsbereich hinzufügen</h3>
+            <ul>
+                <li>Drucktaste <strong>„Vertriebsbereiche"</strong> → <strong>„Anlegen"</strong> klicken.</li>
+            </ul>
+            <h3>Schritt 4: Organisationsdaten pflegen</h3>
+            <ul>
+                <li>Verk.-Org., Vertr.-Weg und Sparte eingeben → <strong>„Übernehmen"</strong>.</li>
+            </ul>
+            <div class="img-placeholder">Bild: Vertriebsbereiche erfassen</div>
+            <h3>Schritt 5: Speichern und Bestätigen</h3>
+            <ul>
+                <li>Speichern-Symbol klicken → Meldung <em>„Änderungen wurden gesichert"</em> mit OK bestätigen.</li>
+            </ul>
+        `,
+        "debitor_anzeigen": `
+            <h2>Debitor anzeigen</h2>
+            <p>Inhalt folgt...</p>
+            <div class="img-placeholder">Platzhalter</div>
+        `,
+        "kondition_anlegen": `
+            <h2>Konditionen anlegen <span class="transaction-code">VK11</span></h2>
+            <p>Verkaufspreise festlegen.</p>
+            <ol>
+                <li>Konditionsart PR00 (Preis) wählen.</li>
+                <li>Schlüsselkombination wählen.</li>
+                <li>Material und Preis eingeben.</li>
+                <li>Sichern.</li>
+            </ol>
+            <div class="img-placeholder">Bild: Preiserfassung</div>
+        `,
+        "kondition_aendern": `
+            <h2>Konditionen ändern <span class="transaction-code">VK12</span></h2>
+            <p>Inhalt folgt...</p>
+            <div class="img-placeholder">Platzhalter</div>
+        `,
+        "kondition_anzeigen": `
+            <h2>Konditionen anzeigen <span class="transaction-code">VK13</span></h2>
+            <p>Inhalt folgt...</p>
+            <div class="img-placeholder">Platzhalter</div>
+        `,
+        "kontrakt_anlegen": `
+            <h2>Verkaufskontrakte anlegen <span class="transaction-code">VA41</span></h2>
+            <p>Rahmenvertrag für Kunden erstellen.</p>
+            <ol>
+                <li>Kontraktart (z.B. MK Mengenkontrakt) wählen.</li>
+                <li>Auftraggeber und Gültigkeit eingeben.</li>
+                <li>Material und Zielmenge erfassen.</li>
+                <li>Sichern.</li>
+            </ol>
+            <div class="img-placeholder">Bild: Kontraktübersicht</div>
+        `,
+        "kontrakt_aendern": `
+            <h2>Verkaufskontrakte ändern <span class="transaction-code">VA42</span></h2>
+            <p>Inhalt folgt...</p>
+            <div class="img-placeholder">Platzhalter</div>
+        `,
+        "kontrakt_anzeigen": `
+            <h2>Verkaufskontrakte anzeigen <span class="transaction-code">VA43</span></h2>
+            <p>Inhalt folgt...</p>
+            <div class="img-placeholder">Platzhalter</div>
+        `,
+
+        // ══════════════════════════════════════════════════════
+        // MATERIAL (bestehend)
+        // ══════════════════════════════════════════════════════
+
+        "material_anlegen": `
+            <h2>Material anlegen <span class="transaction-code">MM01</span></h2>
+            <p>Zentrale Transaktion zur Materialanlage.</p>
+            <ol>
+                <li>Materialnummer, Branche und Materialart eingeben.</li>
+                <li>Sichten auswählen (Grunddaten, Einkauf, Vertrieb, Dispo, Buchhaltung).</li>
+                <li>Werk, Lagerort und Vertriebsweg angeben.</li>
+                <li>Pflichtfelder in den Sichten ausfüllen (Basismengeneinheit, Warengruppe, etc.).</li>
+                <li>Sichern.</li>
+            </ol>
+            <div class="img-placeholder">Bild: MM01 Sichtenwahl</div>
+        `,
+        "material_aendern": `
+            <h2>Material ändern <span class="transaction-code">MM02</span></h2>
+            <p>Inhalt folgt...</p>
+            <div class="img-placeholder">Platzhalter</div>
+        `,
+        "material_anzeigen": `
+            <h2>Material anzeigen <span class="transaction-code">MM03</span></h2>
+            <p>Inhalt folgt...</p>
+            <div class="img-placeholder">Platzhalter</div>
+        `,
+        "materialverzeichnis": `
+            <h2>Materialverzeichnis <span class="transaction-code">MM60</span></h2>
+            <p>Inhalt folgt...</p>
+            <div class="img-placeholder">Platzhalter</div>
+        `,
+        "materialart_aendern": `
+            <h2>Materialart ändern <span class="transaction-code">MMAM</span></h2>
+            <p>Ändert den Typ eines Materials (z.B. von ROH zu HAWA).</p>
+            <p><em>Voraussetzung: Keine Bestände vorhanden!</em></p>
+            <div class="img-placeholder">Bild: MMAM</div>
+        `,
+        "mr21": `
+            <h2>Bewertungspreis ändern <span class="transaction-code">MR21</span></h2>
+            <p>Manuelle Änderung des Materialpreises (nur bei Bestandsbewertung).</p>
+            <ol>
+                <li>Buchungskreis und Werk eingeben.</li>
+                <li>Materialnummer und neuen Preis eintragen.</li>
+                <li>Sichern (erzeugt Buchhaltungsbeleg).</li>
+            </ol>
+            <div class="img-placeholder">Bild: MR21 Preisänderung</div>
+        `,
+        "bestandsuebersicht": `
+            <h2>Bestandsübersicht <span class="transaction-code">MMBE</span></h2>
+            <p>Inhalt folgt...</p>
+            <div class="img-placeholder">Platzhalter</div>
+        `,
+        "md04": `
+            <h2>Bedarfs-/Bestandsliste <span class="transaction-code">MD04</span></h2>
+            <p>Zeigt die aktuelle Verfügbarkeitssituation eines Materials.</p>
+            <ol>
+                <li>Material und Werk eingeben.</li>
+                <li>Liste analysieren (Bestände, Zugänge, Abgänge).</li>
+            </ol>
+            <div class="img-placeholder">Bild: MD04 Liste</div>
+        `,
+
+        // ══════════════════════════════════════════════════════
+        // DEFINITIONEN
+        // ══════════════════════════════════════════════════════
+
+        "def_mandant": `
+            <span class="def-badge">Definition</span>
+            <h1>Mandant</h1>
+            <p>Der <strong>Mandant</strong> ist die höchste Hierarchieebene im SAP-System. Er stellt eine handelsrechtlich, organisatorisch und datentechnisch abgeschlossene Einheit dar.</p>
+            <h2>Merkmale</h2>
+            <ul>
+                <li>Alle Daten im SAP-System sind einem Mandanten zugeordnet.</li>
+                <li>Verschiedene Mandanten werden durch ihre <strong>Mandantennummer</strong> (3-stellig) identifiziert.</li>
+                <li>Stammdaten auf Mandantenebene (z.B. Teile der Debitorenstammdaten) gelten für alle Buchungskreise innerhalb des Mandanten.</li>
+                <li>Ein SAP-System kann mehrere Mandanten enthalten (z.B. für Test und Produktion).</li>
+            </ul>
+            <h2>Einordnung in die Hierarchie</h2>
+            <table class="org-table">
+                <tr><th>Ebene</th><th>Begriff</th></tr>
+                <tr><td>1 (höchste)</td><td><strong>Mandant</strong> ← Sie sind hier</td></tr>
+                <tr><td>2</td><td>Buchungskreis</td></tr>
+                <tr><td>3</td><td>Werk / Verkaufsorganisation</td></tr>
+                <tr><td>4 (niedrigste)</td><td>Lagerort / Vertriebsweg / Sparte</td></tr>
+            </table>
+            <div class="info-box"><p>📌 <strong>Bei Global Bike:</strong> Alle Schüler arbeiten im selben Mandanten. Die Mandantennummer erhalten Sie von Ihrer Lehrkraft.</p></div>
+        `,
+
+        "def_buchungskreis": `
+            <span class="def-badge">Definition</span>
+            <h1>Buchungskreis</h1>
+            <p>Der <strong>Buchungskreis</strong> ist die zentrale Organisationseinheit des externen Rechnungswesens im SAP-System. Er bildet ein <strong>rechtlich selbstständiges Unternehmen</strong> mit eigener Gewinn- und Verlustrechnung sowie eigener Bilanz ab.</p>
+            <h2>Merkmale</h2>
+            <ul>
+                <li>In einem SAP-Mandanten muss mindestens ein Buchungskreis angelegt sein.</li>
+                <li>Für einen Konzern können mehrere Buchungskreise in einem Mandanten existieren.</li>
+                <li>Alle buchhalterischen Vorgänge (Rechnungen, Zahlungen) werden einem Buchungskreis zugeordnet.</li>
+                <li>Debitorenstammdaten und Kreditorenstammdaten haben eine <strong>buchungskreisbezogene Sicht</strong>.</li>
+            </ul>
+            <div class="info-box"><p>📌 <strong>Bei Global Bike:</strong> Ihr Buchungskreis lautet <strong>DE@@</strong> (wobei @@ Ihre persönliche Organisationsnummer ist).</p></div>
+        `,
+
+        "def_werk": `
+            <span class="def-badge">Definition</span>
+            <h1>Werk</h1>
+            <p>Ein <strong>Werk</strong> ist eine organisatorische Einheit in der Logistik, die das Unternehmen aus Sicht der Produktion, Beschaffung, Instandhaltung und Disposition gliedert.</p>
+            <h2>Merkmale</h2>
+            <ul>
+                <li>In einem Werk werden Materialien produziert und/oder Waren und Dienstleistungen bereitgestellt bzw. gelagert.</li>
+                <li>Materialstammdaten werden oft auf Werksebene gepflegt (z.B. Planlieferzeit, Dispositionsdaten, Bestand).</li>
+                <li>Ein Werk ist immer einem Buchungskreis zugeordnet.</li>
+                <li>Ein Buchungskreis kann mehrere Werke haben.</li>
+            </ul>
+            <div class="info-box"><p>📌 <strong>Bei Global Bike:</strong> Es gibt zwei Werke – <strong>Heidelberg (HD@@)</strong> für Produktion und <strong>Hamburg (HH@@)</strong> als Distributionsstandort.</p></div>
+        `,
+
+        "def_lagerort": `
+            <span class="def-badge">Definition</span>
+            <h1>Lagerort</h1>
+            <p>Ein <strong>Lagerort</strong> ist eine organisatorische Einheit, die eine Unterscheidung von Materialbeständen innerhalb eines Werkes ermöglicht.</p>
+            <h2>Merkmale</h2>
+            <ul>
+                <li>Inventur und mengenmäßige Bestandsführung werden auf Lagerortebene durchgeführt.</li>
+                <li>Ein Lagerort ist immer einem Werk zugeordnet.</li>
+                <li>In einem Werk können mehrere Lagerorte existieren.</li>
+            </ul>
+            <div class="info-box"><p>📌 <strong>Bei Global Bike:</strong> Jedes Werk hat zwei Lagerorte: <strong>Zentrallager (ZL)</strong> für normale Materialien und <strong>Gefahrstoffe (GF)</strong> für Lacke und gefährliche Stoffe.</p></div>
+        `,
+
+        "def_einkaufsorganisation": `
+            <span class="def-badge">Definition</span>
+            <h1>Einkaufsorganisation</h1>
+            <p>Eine <strong>Einkaufsorganisation</strong> ist eine organisatorische Einheit innerhalb der Logistik, die das Unternehmen nach den Anforderungen des Einkaufs gliedert.</p>
+            <h2>Aufgaben</h2>
+            <ul>
+                <li>Beschaffung von Materialien und Dienstleistungen</li>
+                <li>Verhandlung von Einkaufskonditionen mit Lieferanten</li>
+                <li>Rechtliche Verantwortung für Einkaufsgeschäfte</li>
+            </ul>
+            <div class="info-box"><p>📌 <strong>Bei Global Bike:</strong> Die Einkaufsorganisation ist identisch mit dem Buchungskreis (<strong>DE@@</strong>).</p></div>
+        `,
+
+        "def_verkaufsorganisation": `
+            <span class="def-badge">Definition</span>
+            <h1>Verkaufsorganisation</h1>
+            <p>Eine <strong>Verkaufsorganisation</strong> ist eine organisatorische Einheit, die verantwortlich ist für den Vertrieb von Materialien und/oder Leistungen. Jede Verkaufsorganisation zeichnet sich durch eine eigenständige Preispolitik aus.</p>
+            <div class="info-box"><p>📌 <strong>Bei Global Bike:</strong> Es gibt zwei Verkaufsorganisationen: <strong>Deutschland Süd (DS@@)</strong> und <strong>Deutschland Nord (DN@@)</strong>.</p></div>
+        `,
+
+        "def_vertriebsweg": `
+            <span class="def-badge">Definition</span>
+            <h1>Vertriebsweg</h1>
+            <p>Der <strong>Vertriebsweg</strong> beschreibt den Weg, auf dem verkaufsfähige Materialien oder Dienstleistungen zum Kunden gelangen. Er wird immer einer Verkaufsorganisation zugeordnet.</p>
+            <h2>Typische Vertriebswege</h2>
+            <ul>
+                <li><strong>Großhandel (GH)</strong> – Verkauf an Händler in großen Mengen</li>
+                <li><strong>Einzelhandel (EH)</strong> – Verkauf an Endverbraucher über stationären Handel</li>
+                <li><strong>Direktvertrieb (DV)</strong> – Direkter Verkauf ohne Zwischenhändler</li>
+            </ul>
+            <div class="info-box"><p>📌 <strong>Bei Global Bike:</strong> DS bedient GH und EH; DN bedient GH und DV.</p></div>
+        `,
+
+        "def_sparte": `
+            <span class="def-badge">Definition</span>
+            <h1>Sparte</h1>
+            <p>Die <strong>Sparte</strong> ist eine Organisationseinheit, mit der Materialien und Dienstleistungen gruppiert werden können. Verschiedenen Sparten können unterschiedliche Liefer- und Zahlungsbedingungen zugeordnet werden.</p>
+            <div class="info-box"><p>📌 <strong>Bei Global Bike:</strong> <strong>Bikes (BI)</strong> umfasst selbst gefertigte Fahrräder und Tretroller; <strong>Zubehör (ZU)</strong> umfasst alle zugekauften Handelswaren. In jedem Vertriebsweg werden Waren aus beiden Sparten verkauft.</p></div>
+        `,
+
+        "def_vertriebsbereich": `
+            <span class="def-badge">Definition</span>
+            <h1>Vertriebsbereich</h1>
+            <p>Der <strong>Vertriebsbereich</strong> ist als Kombination aus drei Elementen definiert:</p>
+            <p style="font-size:1.2rem; text-align:center; margin: 20px 0; color: var(--sap-primary);"><strong>Verkaufsorganisation + Vertriebsweg + Sparte</strong></p>
+            <h2>Beispiel</h2>
+            <p>Der Vertriebsbereich <strong>DS@@ / GH / BI</strong> bedeutet:</p>
+            <ul>
+                <li>Verkaufsorganisation: Deutschland Süd (DS@@)</li>
+                <li>Vertriebsweg: Großhandel (GH)</li>
+                <li>Sparte: Bikes (BI)</li>
+            </ul>
+            <div class="info-box"><p>📌 Kundenstammdaten im Bereich Vertrieb werden immer für einen bestimmten Vertriebsbereich gepflegt. Ein Kunde kann mehreren Vertriebsbereichen zugeordnet sein.</p></div>
+        `,
+
+        "def_debitor": `
+            <span class="def-badge">Definition</span>
+            <h1>Debitor (Kunde)</h1>
+            <p>Ein <strong>Debitor</strong> ist ein Geschäftspartner, gegenüber dem <strong>Forderungen</strong> aus Lieferungen und Leistungen bestehen – im Alltag: ein <strong>Kunde</strong>.</p>
+            <h2>Im SAP S/4HANA</h2>
+            <p>Der Debitor wird über den zentralen <strong>Geschäftspartner (Business Partner, BP)</strong> abgebildet. Die Rolle „Debitor" wird durch die Rollencodes <strong>FLCU00</strong> (allgemein) und <strong>FLCU01</strong> (buchungskreisbezogen) aktiviert.</p>
+            <h2>Die drei Datensichten</h2>
+            <table class="org-table">
+                <tr><th>Sicht</th><th>Gültigkeit</th><th>Enthält</th></tr>
+                <tr><td>Allgemeine Daten</td><td>Mandantenweit</td><td>Adresse, Bank, Steuer</td></tr>
+                <tr><td>Buchungskreisdaten</td><td>Je Buchungskreis</td><td>Abstimmkonto, Ansprechpartner</td></tr>
+                <tr><td>Vertriebsdaten</td><td>Je Vertriebsbereich</td><td>Zahlungs- und Lieferbedingungen</td></tr>
+            </table>
+            <div class="info-box"><p>📌 <strong>Gegenteil:</strong> Ein <strong>Kreditor</strong> (Lieferant) ist jemand, dem das Unternehmen Geld schuldet. Ein Debitor (Kunde) schuldet dem Unternehmen Geld.</p></div>
+        `,
+
+        "def_kreditor": `
+            <span class="def-badge">Definition</span>
+            <h1>Kreditor (Lieferant)</h1>
+            <p>Ein <strong>Kreditor</strong> ist ein Geschäftspartner, dem gegenüber <strong>Verbindlichkeiten</strong> bestehen – im Alltag: ein <strong>Lieferant</strong>.</p>
+            <h2>Im SAP S/4HANA</h2>
+            <p>Wie der Debitor wird auch der Kreditor über den zentralen <strong>Geschäftspartner (Business Partner)</strong> verwaltet. Kreditoren werden benötigt, um Bestellungen auszulösen und Rechnungen zu verbuchen.</p>
+            <h2>Die drei Datensichten</h2>
+            <table class="org-table">
+                <tr><th>Sicht</th><th>Gültigkeit</th><th>Enthält</th></tr>
+                <tr><td>Allgemeine Daten</td><td>Mandantenweit</td><td>Adresse, Bank, Kontaktdaten</td></tr>
+                <tr><td>Buchungskreisdaten</td><td>Je Buchungskreis</td><td>Abstimmkonto, Ansprechpartner</td></tr>
+                <tr><td>Einkaufsdaten</td><td>Je Einkaufsorganisation</td><td>Zahlungs- und Lieferbedingungen</td></tr>
+            </table>
+            <div class="info-box"><p>📌 <strong>Merksatz:</strong> Kreditor = <em>Kreditgeber</em> = hat dem Unternehmen etwas geliefert = das Unternehmen schuldet ihm Geld (Verbindlichkeit).</p></div>
+        `,
+
+        "def_abstimmkonto": `
+            <span class="def-badge">Definition</span>
+            <h1>Abstimmkonto</h1>
+            <p>Das <strong>Abstimmkonto</strong> ist ein Sachkonto im Hauptbuch (Finanzbuchhaltung), auf dem die Verkehrszahlen der Nebenbuchkonten (Debitoren/Kreditoren) automatisch und parallel fortgeschrieben werden.</p>
+            <h2>Wichtige Eigenschaften</h2>
+            <ul>
+                <li>Es kann <strong>nicht direkt</strong> bebucht werden – Buchungen erfolgen nur über die Nebenbuchkonten.</li>
+                <li>Es stellt die Verbindung zwischen dem Nebenbuch (einzelne Kundendaten) und dem Hauptbuch (Bilanz) her.</li>
+                <li>Bei Debitoren: typischerweise ein Konto für <em>Forderungen aus Lieferungen und Leistungen</em>.</li>
+                <li>Bei Kreditoren: typischerweise ein Konto für <em>Verbindlichkeiten aus Lieferungen und Leistungen</em>.</li>
+            </ul>
+            <div class="info-box"><p>📌 Das Abstimmkonto ist in den <strong>Buchungskreisdaten</strong> des Debitors/Kreditors hinterlegt, weil es buchungskreisbezogen ist – jeder Buchungskreis führt eine eigene Buchhaltung.</p></div>
+        `,
+
+        "def_einkaufsinfosatz": `
+            <span class="def-badge">Definition</span>
+            <h1>Einkaufsinfosatz</h1>
+            <p>Der <strong>Einkaufsinfosatz</strong> speichert Informationen über die Geschäftsbeziehung zwischen einem bestimmten <strong>Material</strong> und einem bestimmten <strong>Lieferanten</strong>.</p>
+            <h2>Warum nicht im Materialstamm?</h2>
+            <p>Ein Material kann von <em>mehreren Lieferanten</em> bezogen werden, die jeweils unterschiedliche Preise und Konditionen haben. Deshalb werden diese Informationen <strong>nicht</strong> im Materialstamm, sondern im Infosatz gespeichert.</p>
+            <h2>Enthält unter anderem</h2>
+            <ul>
+                <li><strong>Listeneinkaufspreis (Nettopreis)</strong></li>
+                <li><strong>Planlieferzeit</strong></li>
+                <li><strong>Normale Bestellmenge</strong></li>
+                <li><strong>Lieferantenmaterialnummer</strong> (wie der Lieferant das Material bezeichnet)</li>
+                <li><strong>Lieferbedingungen</strong></li>
+            </ul>
+            <div class="info-box"><p>📌 Infosätze können manuell angelegt oder automatisch bei einer Erstbestellung erzeugt werden.</p></div>
+        `,
+
+        "def_orderbuch": `
+            <span class="def-badge">Definition</span>
+            <h1>Orderbuch</h1>
+            <p>Das <strong>Orderbuch</strong> ist ein Instrument im Einkauf, das festlegt, von welchen <strong>Bezugsquellen (Lieferanten)</strong> ein Material innerhalb eines bestimmten Zeitraums in einem Werk beschafft werden darf oder muss.</p>
+            <h2>Zweck</h2>
+            <ul>
+                <li>Steuert die <strong>automatische Bezugsquellenfindung</strong> bei der Bestellung.</li>
+                <li>Kann Lieferanten als <em>fest</em> (nur dieser Lieferant) oder <em>bevorzugt</em> markieren.</li>
+                <li>Ermöglicht zeitliche Einschränkung: nur innerhalb eines Gültigkeitszeitraums.</li>
+            </ul>
+            <div class="info-box"><p>📌 Ohne Orderbuch muss der Einkäufer den Lieferanten bei jeder Bestellung manuell auswählen.</p></div>
+        `,
+
+        "def_konditionen": `
+            <span class="def-badge">Definition</span>
+            <h1>Konditionen</h1>
+            <p><strong>Konditionen</strong> sind Stammdaten, die für die <strong>Preisfindung</strong> in Einkauf und Verkauf verwendet werden.</p>
+            <h2>Was gehört dazu?</h2>
+            <ul>
+                <li>Preise (z.B. Listenverkaufspreis PR00)</li>
+                <li>Rabatte und Zuschläge</li>
+                <li>Frachtkosten</li>
+                <li>Steuern</li>
+            </ul>
+            <h2>Eigenschaften</h2>
+            <ul>
+                <li>Konditionen können <strong>zeitabhängig</strong> hinterlegt werden (Gültigkeitszeitraum).</li>
+                <li>Sie können für verschiedene Vertriebsbereiche unterschiedlich sein.</li>
+                <li>Im Verkauf: Transaktion VK11 (anlegen), VK12 (ändern), VK13 (anzeigen).</li>
+            </ul>
+        `,
+
+        "def_kontrakt": `
+            <span class="def-badge">Definition</span>
+            <h1>Kontrakt</h1>
+            <p>Ein <strong>Kontrakt</strong> ist ein <strong>langfristiger Rahmenvertrag</strong> mit einem Lieferanten oder Kunden über die Abnahme von Waren oder Dienstleistungen.</p>
+            <h2>Arten von Kontrakten</h2>
+            <table class="org-table">
+                <tr><th>Art</th><th>Beschreibung</th></tr>
+                <tr><td><strong>Mengenkontrakt</strong></td><td>Es wird eine feste Gesamtmenge vereinbart (z.B. 1.000 Stück/Jahr)</td></tr>
+                <tr><td><strong>Wertkontrakt</strong></td><td>Es wird ein fester Gesamtwert vereinbart (z.B. 50.000 EUR/Jahr)</td></tr>
+            </table>
+            <div class="info-box"><p>📌 Kontrakte dienen als Rahmen – die eigentlichen Lieferungen werden über <em>Abrufe</em> gegen den Kontrakt gesteuert.</p></div>
+        `,
+
+        "def_materialart": `
+            <span class="def-badge">Definition</span>
+            <h1>Materialart</h1>
+            <p>Die <strong>Materialart</strong> klassifiziert Materialien mit gleichen Eigenschaften und steuert das Verhalten des Materials im SAP-System.</p>
+            <h2>Was steuert die Materialart?</h2>
+            <ul>
+                <li><strong>Nummernvergabe:</strong> intern (System vergibt Nummer) oder extern</li>
+                <li><strong>Sichtenauswahl:</strong> welche Datensichten verfügbar sind</li>
+                <li><strong>Bestandsführung:</strong> ob Bestände geführt werden</li>
+                <li><strong>Beschaffungsart:</strong> Eigenfertigung oder Fremdbezug</li>
+            </ul>
+            <h2>Wichtige Materialarten bei Global Bike</h2>
+            <table class="org-table">
+                <tr><th>Kürzel</th><th>Bezeichnung</th><th>Beispiel</th></tr>
+                <tr><td><strong>HAWA</strong></td><td>Handelsware</td><td>Geländehelm, Wasserflasche</td></tr>
+                <tr><td><strong>FERT</strong></td><td>Fertigerzeugnis</td><td>Citybike (schwarz)</td></tr>
+                <tr><td><strong>ROH</strong></td><td>Rohstoff / Fremdbezugsteil</td><td>Zylinderschraube</td></tr>
+            </table>
+        `,
+
+        "def_incoterms": `
+            <span class="def-badge">Definition</span>
+            <h1>Incoterms</h1>
+            <p><strong>Incoterms</strong> (International Commercial Terms) sind international gültige Regeln zur Auslegung handelsüblicher Vertragsformeln im Warenhandel.</p>
+            <h2>Was regeln Incoterms?</h2>
+            <ul>
+                <li><strong>Gefahrenübergang:</strong> Ab wann trägt der Käufer das Transportrisiko?</li>
+                <li><strong>Kostentragung:</strong> Wer zahlt Fracht, Versicherung, Zoll?</li>
+                <li><strong>Lieferort:</strong> Wo ist die Ware zu übergeben?</li>
+            </ul>
+            <h2>Häufige Incoterms</h2>
+            <table class="org-table">
+                <tr><th>Kürzel</th><th>Bedeutung</th><th>Vorteil für</th></tr>
+                <tr><td><strong>EXW</strong></td><td>Ab Werk – Käufer holt ab</td><td>Verkäufer (minimales Risiko)</td></tr>
+                <tr><td><strong>DAP</strong></td><td>Geliefert benannter Ort – Verkäufer liefert</td><td>Käufer</td></tr>
+                <tr><td><strong>CIF</strong></td><td>Kosten, Versicherung, Fracht – bis Bestimmungshafen</td><td>Käufer (Seeversicherung inbegriffen)</td></tr>
+            </table>
+            <div class="info-box"><p>📌 In SAP werden Incoterms in den <strong>Fakturadaten</strong> des Debitors (Sicht Vertrieb) und im Einkaufsinfosatz hinterlegt.</p></div>
+        `,
+
+        "def_dispositionsmerkmal": `
+            <span class="def-badge">Definition</span>
+            <h1>Dispositionsmerkmal</h1>
+            <p>Das <strong>Dispositionsmerkmal</strong> steuert im Materialstamm, wie und ob die <strong>Materialbedarfsplanung (MRP)</strong> für ein Material durchgeführt wird.</p>
+            <h2>Wichtige Merkmale</h2>
+            <table class="org-table">
+                <tr><th>Kürzel</th><th>Verfahren</th><th>Beschreibung</th></tr>
+                <tr><td><strong>PD</strong></td><td>Plangesteuert (MRP)</td><td>System berechnet Bedarfe automatisch anhand von Stücklisten und Bedarfsmengen</td></tr>
+                <tr><td><strong>VB</strong></td><td>Manuelle Bestellpunktdisposition</td><td>Bestellung wird ausgelöst, wenn Bestand einen Meldebestand unterschreitet</td></tr>
+                <tr><td><strong>VM</strong></td><td>Automatische Bestellpunktdisposition</td><td>Meldebestand wird vom System berechnet</td></tr>
+                <tr><td><strong>ND</strong></td><td>Keine Disposition</td><td>Material wird nicht automatisch disponiert</td></tr>
+            </table>
+            <div class="info-box"><p>📌 Das Dispositionsmerkmal befindet sich in der Sicht <strong>Disposition 1</strong> des Materialstamms.</p></div>
+        `
+
+    };
+
+    // ---------------------------------------------------------
+    // 4. LOGIK
+    // ---------------------------------------------------------
+
+    document.addEventListener("DOMContentLoaded", () => {
+        renderSidebar();
+        loadContent("welcome");
+        setupSearch();
+    });
+
+    function renderSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        let html = '';
+        menuStructure.forEach((category, catIndex) => {
+            html += `
+                <div class="nav-category" onclick="toggleCategory(${catIndex})">
+                    ${category.title}
+                    <span class="arrow" id="arrow-${catIndex}">▼</span>
+                </div>
+                <div class="sub-menu" id="submenu-${catIndex}">
+            `;
+            category.items.forEach(item => {
+                if (item.type === 'header') {
+                    html += `<div class="nav-group-header">${item.label}</div>`;
+                } else {
+                    html += `
+                        <div class="nav-item" onclick="loadContent('${item.id}')" id="link-${item.id}">
+                            <span>${item.label}</span>
+                            <div class="help-icon" onclick="navigateToDefinition(event, '${item.help}')">?</div>
+                        </div>
+                    `;
+                }
+            });
+            html += `</div>`;
+        });
+        sidebar.innerHTML = html;
+    }
+
+    function toggleCategory(index) {
+        const submenu = document.getElementById(`submenu-${index}`);
+        const arrow = document.getElementById(`arrow-${index}`);
+        const categoryDiv = arrow.parentNode;
+        const isClosed = submenu.style.display === "none" || submenu.style.display === "";
+        if (isClosed) {
+            submenu.style.display = "block";
+            arrow.style.transform = "rotate(180deg)";
+            categoryDiv.classList.add("active");
+        } else {
+            submenu.style.display = "none";
+            arrow.style.transform = "rotate(0deg)";
+            categoryDiv.classList.remove("active");
+        }
+    }
+
+    function loadContent(id) {
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active-link'));
+        const activeLink = document.getElementById(`link-${id}`);
+        if (activeLink) activeLink.classList.add('active-link');
+
+        let htmlContent = content[id];
+        if (!htmlContent) {
+            htmlContent = `<h2>${id.replace(/_/g, ' ')}</h2><p>Inhalt folgt...</p><div class="img-placeholder">Platzhalter</div>`;
+        }
+
+        // Lexikon-Begriffe im Text verlinken (Popover bei Hover)
+        Object.keys(lexicon).forEach(term => {
+            const regex = new RegExp(`(?<!<[^>]*)\\b${term}\\b`, 'g');
+            htmlContent = htmlContent.replace(regex,
+                `<span class="term-highlight" onclick="showPopover(event, '${term}')">${term}</span>`
+            );
+        });
+
+        document.getElementById('mainContent').innerHTML = `<div class="content-card">${htmlContent}</div>`;
+        document.getElementById('mainContent').scrollTop = 0;
+    }
+
+    // ? in Sidebar → direkt zur Definitionsseite navigieren
+    function navigateToDefinition(event, term) {
+        event.stopPropagation();
+        const pageId = helpToPageId[term];
+        if (pageId && content[pageId]) {
+            loadContent(pageId);
+        }
+    }
+
+    // Popover für Textmarkierungen im Content
+    function showPopover(event, term) {
+        event.stopPropagation();
+        const data = lexicon[term];
+        if (!data) return;
+        currentPopoverTerm = term;
+
+        document.getElementById('popTitle').innerText = term;
+        document.getElementById('popText').innerText = data.text;
+
+        let x = event.clientX + 15;
+        let y = event.clientY + 10;
+        if (x + 320 > window.innerWidth) x = event.clientX - 320;
+
+        const pop = document.getElementById('popover');
+        pop.style.left = x + 'px';
+        pop.style.top = y + 'px';
+        pop.style.display = 'block';
+    }
+
+    function navigateFromPopover() {
+        hidePopover();
+        const pageId = lexicon[currentPopoverTerm] && lexicon[currentPopoverTerm].pageId;
+        if (pageId && content[pageId]) loadContent(pageId);
+    }
+
+    function hidePopover() {
+        document.getElementById('popover').style.display = 'none';
+    }
+
+    document.addEventListener('click', function(e) {
+        const pop = document.getElementById('popover');
+        if (!pop.contains(e.target)) pop.style.display = 'none';
+    });
+
+    // Suche
+    function setupSearch() {
+        const input = document.getElementById('searchInput');
+        const results = document.getElementById('searchResults');
+
+        input.addEventListener('input', function() {
+            const val = this.value.toLowerCase();
+            results.innerHTML = '';
+            if (val.length < 2) { results.style.display = 'none'; return; }
+
+            let hits = [];
+            menuStructure.forEach(cat => {
+                cat.items.forEach(item => {
+                    if (item.type === 'link' && item.label.toLowerCase().includes(val)) {
+                        hits.push({ title: item.label, id: item.id, type: 'Anleitung' });
+                    }
+                });
+            });
+            Object.keys(lexicon).forEach(term => {
+                if (term.toLowerCase().includes(val)) {
+                    hits.push({ title: term, id: lexicon[term].pageId, type: 'Definition' });
+                }
+            });
+            Object.keys(content).forEach(id => {
+                if (id.startsWith('intro_')) {
+                    const label = id.replace('intro_', '').replace(/_/g, ' ');
+                    if (label.includes(val) && !hits.find(h => h.id === id)) {
+                        hits.push({ title: label, id: id, type: 'Einleitung' });
+                    }
+                }
+            });
+
+            if (hits.length > 0) {
+                results.style.display = 'block';
+                hits.forEach(hit => {
+                    const div = document.createElement('div');
+                    div.className = 'search-item';
+                    div.innerHTML = `<strong>${hit.title}</strong><small>${hit.type}</small>`;
+                    div.onclick = () => {
+                        if (hit.id) loadContent(hit.id);
+                        results.style.display = 'none';
+                        input.value = '';
+                    };
+                    results.appendChild(div);
+                });
+            } else {
+                results.style.display = 'none';
+            }
+        });
+    }
+</script>
+</body>
+</html>
